@@ -104,8 +104,7 @@ class App(QWidget):
         text_to_render = self.type.text()
         font = Font(os.path.join('Fonts', self.fonts.currentText()), 8, 10)
         text = repr(font.render_text(text_to_render, 52, 7))
-        # text.split always adds an extra element, '\n'. Strip that off
-        text_by_weekday = text.split('\n')[:-1]
+        text_by_weekday = text.split('\n')
         for i in range(7):
             for j in range(51):
                 if text_by_weekday[i][j]=='#':
