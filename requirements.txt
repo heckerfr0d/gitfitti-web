@@ -1,2 +1,3 @@
 gitpython
 pyqt6
+freetype-py
