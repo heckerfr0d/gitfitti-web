@@ -1,6 +1,6 @@
 import sys, datetime, os, git
 from font import Font
-from PyQt6.QtWidgets import QApplication, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QErrorMessage, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
 from PyQt6.QtGui import QIcon
 
 def getDates(year):
@@ -28,6 +28,7 @@ class App(QWidget):
         self.repo = QLineEdit()
         self.type = QLineEdit()
         self.fonts = QComboBox()
+        self.err = QMessageBox()
         prev = QPushButton('Translate')
         leggo = QPushButton('Do it')
         leggo.clicked.connect(self.doit)
@@ -40,6 +41,8 @@ class App(QWidget):
         self.email.setPlaceholderText('Committer email*')
         self.repo.setPlaceholderText('repo url* as https://username:password@github.com/username/reponame')
         self.type.setPlaceholderText('Translate text to tile art!')
+        self.err.setWindowIcon(QIcon('icon.png'))
+        self.err.setWindowTitle('Error!')
         hl.addWidget(self.name)
         hl.addWidget(self.email)
         hl.addWidget(self.y)
@@ -67,48 +70,72 @@ class App(QWidget):
         return ad
 
     def doit(self):
-        year = int(self.y.currentText())
-        dates = self.getActiveDates(getDates(year))
-        author = git.Actor(self.name.text(), self.email.text())
-        repurl = self.repo.text()
-        repname = repurl.split('/')[-1]
-        git.cmd.Git().clone(repurl)
-        rep = git.Repo.init(repname)
-        for date in dates:
-            filename = date.strftime('%Y-%m-%d-%H-%M-%S')
-            filepath = os.path.join(repname, filename)
-            with open(filepath, 'w') as f:
-                f.write(filename)
-            rep.index.add([filename])
-            rep.index.commit("GitHub abuz add", author=author, committer=author, author_date=date.isoformat())
-            rep.index.remove([filename])
-            rep.index.commit("GitHub abuz remove", author=author, committer=author, author_date=(date+datetime.timedelta(minutes=1)).isoformat())
-            os.remove(os.path.join(repname, filename))
-            os.removedirs(repname)
         try:
-            rep.remotes.origin.set_url(repurl)
+            year = int(self.y.currentText())
+            dates = self.getActiveDates(getDates(year))
+            author = git.Actor(self.name.text(), self.email.text())
+            if not self.name.text() or not self.email.text():
+                self.err.setText('Did you enter your name and email? 🙄')
+                self.err.exec()
+                return
+
+            repurl = self.repo.text()
+            repname = repurl.split('/')[-1]
+            try:
+                git.cmd.Git().clone(repurl)
+            except:
+                self.err.setText('Could not clone the repo. Ensure that the remote repo exists and that you have access to it.\nThe url should be in https://username:password@github.com/username/reponame format')
+                self.err.exec()
+                return
+            rep = git.Repo.init(repname)
+            for date in dates:
+                filename = date.strftime('%Y-%m-%d-%H-%M-%S')
+                filepath = os.path.join(repname, filename)
+                with open(filepath, 'w') as f:
+                    f.write(filename)
+                rep.index.add([filename])
+                rep.index.commit("GitHub abuz add", author=author, committer=author, author_date=date.isoformat())
+                rep.index.remove([filename])
+                rep.index.commit("GitHub abuz remove", author=author, committer=author, author_date=(date+datetime.timedelta(minutes=1)).isoformat())
+                os.remove(os.path.join(repname, filename))
+                os.removedirs(repname)
+            try:
+                rep.remotes.origin.set_url(repurl)
+            except:
+                rep.create_remote('origin', repurl)
+            try:
+                rep.remotes.origin.push()
+            except:
+                self.err.setText('Error pushing. Verify you have permissions to push to the repo and that the url is in https://username:password@github.com/username/reponame form')
+                self.err.exec()
+                return
+            result = QMessageBox()
+            text = f"Created {len(dates)*2} commits as {name.text()} <{email.text()}> in {repname} : https://{repurl[repurl.find('github.com'):]}"
+            result.setWindowIcon(QIcon('icon.png'))
+            result.setWindowTitle('All Done!')
+            result.setText(text)
+            result.exec()
         except:
-            rep.create_remote('origin', repurl)
-        rep.remotes.origin.push()
-        result = QMessageBox()
-        text = f"Created {len(dates)*2} commits as {name.text()} <{email.text()}> in {repname} : https://{repurl[repurl.find('github.com'):]}"
-        result.setWindowIcon(QIcon('icon.png'))
-        result.setWindowTitle('All Done!')
-        result.setText(text)
-        result.exec()
+            self.err.setText('Bruh select a year 🤦‍♂️')
+            self.err.exec()
 
     def textCheck(self):
         for r in self.checkM:
             for m in r:
                 m.setChecked(False)
         text_to_render = self.type.text()
-        font = Font(os.path.join('Fonts', self.fonts.currentText()), 8, 10)
-        text = repr(font.render_text(text_to_render, 52, 7))
-        text_by_weekday = text.split('\n')
-        for i in range(7):
-            for j in range(51):
-                if text_by_weekday[i][j]=='#':
-                    self.checkM[i][j].setChecked(True)
+        font = Font(os.path.join('Fonts', self.fonts.currentText()), 8)
+        try:
+            text = repr(font.render_text(text_to_render, 52, 7))
+            print(text)
+            text_by_weekday = text.split('\n')
+            for i in range(7):
+                for j in range(51):
+                    if text_by_weekday[i][j]=='#':
+                        self.checkM[i][j].setChecked(True)
+        except:
+            self.err.setText('You typed too long :(')
+            self.err.exec()
 
 
 
