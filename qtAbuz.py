@@ -1,6 +1,6 @@
 import sys, datetime, os, git
 from font import Font
-from PyQt6.QtWidgets import QApplication, QErrorMessage, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
 from PyQt6.QtGui import QIcon
 
 def getDates(year):
