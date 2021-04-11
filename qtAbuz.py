@@ -1,5 +1,6 @@
 import sys, datetime, os, git
-from PyQt6.QtWidgets import QApplication, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
+from font import Font
+from PyQt6.QtWidgets import QApplication, QFontComboBox, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
 from PyQt6.QtGui import QIcon
 
 def getDates(year):
@@ -14,52 +15,62 @@ def getDates(year):
 
 class App(QWidget):
     def __init__(self):
-        global y, checkM, name, email, repo
         super().__init__()
         self.setWindowTitle('GitHub Abuz!')
         self.setWindowIcon(QIcon('icon.png'))
         layout = QGridLayout()
         vl = QVBoxLayout()
         hl = QHBoxLayout()
-        y = QComboBox()
-        name = QLineEdit()
-        email = QLineEdit()
-        repo = QLineEdit()
+        hl2 = QHBoxLayout()
+        self.y = QComboBox()
+        self.name = QLineEdit()
+        self.email = QLineEdit()
+        self.repo = QLineEdit()
+        self.type = QLineEdit()
+        self.fonts = QComboBox()
+        prev = QPushButton('Preview')
         self.setLayout(vl)
-        y.addItem('Select year...')
+        self.y.addItem('Select year...')
         for yr in range(2021, 2000, -1):
-            y.addItem(str(yr))
-        name.setPlaceholderText('Committer name*')
-        email.setPlaceholderText('Committer email*')
-        repo.setPlaceholderText('repo url as https://username:password@github.com/username/reponame')
-        hl.addWidget(name)
-        hl.addWidget(email)
-        hl.addWidget(y)
+            self.y.addItem(str(yr))
+        self.fonts.addItems(os.listdir('Fonts'))
+        self.name.setPlaceholderText('Committer name*')
+        self.email.setPlaceholderText('Committer email*')
+        self.repo.setPlaceholderText('repo url* as https://username:password@github.com/username/reponame')
+        self.type.setPlaceholderText('or type your art instead 😏')
+        prev.clicked.connect(self.generate_stencil)
+        hl.addWidget(self.name)
+        hl.addWidget(self.email)
+        hl.addWidget(self.y)
+        hl2.addWidget(self.type)
+        hl2.addWidget(self.fonts)
+        hl2.addWidget(prev)
         vl.addLayout(hl)
-        vl.addWidget(repo)
+        vl.addWidget(self.repo)
         vl.addLayout(layout)
-        checkM = [list() for i in range(7)]
+        vl.addLayout(hl2)
+        self.checkM = [list() for i in range(7)]
         for i in range(7):
             for j in range(51):
                 m = QCheckBox()
                 layout.addWidget(m, i, j)
-                checkM[i].append(m)
-        leggo = QPushButton('Lessgoo')
+                self.checkM[i].append(m)
+        leggo = QPushButton('Do it')
         leggo.clicked.connect(self.doit)
         vl.addWidget(leggo)
     def getActiveDates(self, dates):
         ad = []
         for i in range(7):
             for j in range(51):
-                if checkM[i][j].isChecked():
+                if self.checkM[i][j].isChecked():
                     ad.append(dates[i][j])
         return ad
 
     def doit(self):
-        year = int(y.currentText())
+        year = int(self.y.currentText())
         dates = self.getActiveDates(getDates(year))
-        author = git.Actor(name.text(), email.text())
-        repurl = repo.text()
+        author = git.Actor(self.name.text(), self.email.text())
+        repurl = self.repo.text()
         repname = repurl.split('/')[-1]
         git.cmd.Git().clone(repurl)
         rep = git.Repo.init(repname)
@@ -86,6 +97,24 @@ class App(QWidget):
         result.setText(text)
         result.exec()
 
+    def generate_stencil(self):
+        # Be sure to place 'subway-ticker.ttf' (or any other ttf / otf font file)
+        # in the working directory.
+        for r in self.checkM:
+            for m in r:
+                m.setChecked(False)
+        text_to_render = self.type.text()
+        font = Font(os.path.join('Fonts', self.fonts.currentText()), 8, 10)
+        text = repr(font.render_text(text_to_render, 52, 7))
+        # text.split always adds an extra element, '\n'. Strip that off
+        text_by_weekday = text.split('\n')[:-1]
+        stencil = [list(x) for x in text_by_weekday]
+        for i in range(7):
+            for j in range(52):
+                if stencil[i][j]=='#':
+                    self.checkM[i][j].setChecked(True)
+        return text, stencil
+
 
 
 if __name__ == "__main__":
@@ -93,9 +122,11 @@ if __name__ == "__main__":
     w = App()
     app.setStyleSheet('''
         QLineEdit{
-            color: #8b949e;
             border: 1px #30363d;
             border-radius: 3px;
+            padding: 1px 18px 1px 3px;
+            background-color: #1c2128;
+            color: #f0f6fc;
         }
         QWidget{
             background-color: #0d1117;
