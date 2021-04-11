@@ -1,7 +1,7 @@
 import sys, datetime, os, git
 from font import Font
-from PyQt5.QtWidgets import QApplication, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
-from PyQt5.QtGui import QIcon
+from PyQt6.QtWidgets import QApplication, QHBoxLayout, QMessageBox, QWidget, QLineEdit, QPushButton, QCheckBox, QGridLayout, QComboBox, QVBoxLayout
+from PyQt6.QtGui import QIcon
 
 def getDates(year):
     jan1 = datetime.datetime(year, 1, 1, 4, 20, 59)
@@ -76,7 +76,7 @@ class App(QWidget):
             author = git.Actor(self.name.text(), self.email.text())
             if not self.name.text() or not self.email.text():
                 self.err.setText('Did you enter your name and email? 🙄')
-                self.err.exec_()
+                self.err.exec()
                 return
 
             repurl = self.repo.text()
@@ -85,7 +85,7 @@ class App(QWidget):
                 git.cmd.Git().clone(repurl)
             except:
                 self.err.setText('Could not clone the repo. Ensure that the remote repo exists and that you have access to it.\nThe url should be in https://username:password@github.com/username/reponame format')
-                self.err.exec_()
+                self.err.exec()
                 return
             rep = git.Repo.init(repname)
             for date in dates:
@@ -107,17 +107,17 @@ class App(QWidget):
                 rep.remotes.origin.push()
             except:
                 self.err.setText('Error pushing. Verify you have permissions to push to the repo and that the url is in https://username:password@github.com/username/reponame form')
-                self.err.exec_()
+                self.err.exec()
                 return
             result = QMessageBox()
             text = f"Created {len(dates)*2} commits as {name.text()} <{email.text()}> in {repname} : https://{repurl[repurl.find('github.com'):]}"
             result.setWindowIcon(QIcon('icon.png'))
             result.setWindowTitle('All Done!')
             result.setText(text)
-            result.exec_()
+            result.exec()
         except:
             self.err.setText('Bruh select a year 🤦‍♂️')
-            self.err.exec_()
+            self.err.exec()
 
     def textCheck(self):
         for r in self.checkM:
@@ -135,7 +135,7 @@ class App(QWidget):
                         self.checkM[i][j].setChecked(True)
         except:
             self.err.setText('You typed too long :(')
-            self.err.exec_()
+            self.err.exec()
 
 
 
@@ -346,4 +346,4 @@ if __name__ == "__main__":
 
     ''')
     w.show()
-    sys.exit(app.exec_())
+    sys.exit(app.exec())
