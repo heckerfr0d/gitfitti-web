@@ -1,7 +1,8 @@
 
 # GitHub Abuz
 
-A python GUI app to blatantly abuz the git commit date feature to customize your GitHub Activity tiles thingy.
+A python GUI app to blatantly abuz the git commit date feature to customize your GitHub Activity tiles thingy.  
+Inspired by [@DumbMachine](https://github.com/DumbMachine)'s [GithubArt](https://github.com/DumbMachine/GithubArt/) ❤️
 
 ## Instructions
 
