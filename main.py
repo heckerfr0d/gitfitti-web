@@ -1,22 +1,28 @@
 from flask import Flask, render_template, request
 import git
 import datetime
-import os, shutil
+import os
+import shutil
 
 app = Flask(__name__)
 
+
 def getDates(year=None):
     if year:
-        jan1 = datetime.datetime(year=year, month=1, day=1, hour=10, minute=20, second=59)
+        jan1 = datetime.datetime(
+            year=year, month=1, day=1, hour=10, minute=20, second=59)
     else:
         jan1 = datetime.datetime.now() - datetime.timedelta(weeks=53)
         jan1 -= datetime.timedelta(microseconds=jan1.microsecond)
-    def onDay(date, day): return date + datetime.timedelta(days=(day-date.weekday()) % 7)
+
+    def onDay(date, day): return date + \
+        datetime.timedelta(days=(day-date.weekday()) % 7)
     first_sunday = onDay(jan1, 6)
     dates = [list() for x in range(7)]
     for x in range(52 * 7):
         dates[x % 7].append(first_sunday + datetime.timedelta(x))
     return dates
+
 
 @app.route('/', methods=['GET', 'POST'])
 def main():
@@ -36,6 +42,7 @@ def main():
     # except:
     #     return "error"
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
+
     def getActiveDates(dates):
         ad = []
         for i in range(7):
@@ -52,7 +59,8 @@ def main():
     email = request.form['email']
     author = git.Actor(name, email)
 
-    repurl = "https://" + name + ":" + request.form['password'] + "@" + request.form['repo'][8:]
+    repurl = "https://" + name + ":" + \
+        request.form['password'] + "@" + request.form['repo'][8:]
     repname = repurl.split('/')[-1].split('.')[0]
     if not os.path.isdir(repname):
         try:
@@ -63,7 +71,8 @@ def main():
     nc = int(request.form['nc'])
     for date in dates:
         for n in range(nc):
-            rep.index.commit("made with love by gitfitti", author=author, committer=author, author_date=date.isoformat())
+            rep.index.commit("made with love by gitfitti", author=author,
+                             committer=author, author_date=date.isoformat())
     try:
         rep.remotes.origin.set_url(repurl)
     except:

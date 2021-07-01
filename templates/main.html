@@ -40,8 +40,7 @@
                         <tr>
                             {% for j in range(52) %}
                             <td>
-                                <button type="button" name="{{i}} {{j}}"
-                                    class="btn btn-secondary c0"></button>
+                                <button type="button" name="{{i}} {{j}}" class="btn btn-secondary c0"></button>
                                 {% for k in range(3) %}
                                 {% if k==0 %}
                                 <input type="radio" name="{{i}} {{j}}" value={{k}} checked hidden>
