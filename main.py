@@ -85,5 +85,5 @@ def main():
         return render_template('result.html', msg='ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.', form=request.form)
     return render_template('result.html', msg=f"SUCCESS! Created {nc*len(dates)} commits as {name} [{email}] in {repname}", form=request.form)
 
-
-app.run()
+if __name__ == "__main__":
+    app.run()
