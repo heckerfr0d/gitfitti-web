@@ -1,6 +1,52 @@
+@media only screen and (max-width: 450px) 
+{
+    div.scroll-horizontal
+    {
+        width: 340px;
+        overflow-x: auto;
+        overflow-y: hidden;
+        white-space: nowrap;
+    }
+    
+    input
+    {
+        display: block;
+        width: 340px !important;
+        height: 30px;
+        margin: 10px auto !important;
+    }
+
+    .root{
+        border: 1px #30363d solid !important;
+        padding: 8px !important;
+    }
+
+    .ttt
+    {
+        margin-bottom: 15px !important;
+    }
+
+    .do
+    {
+        margin-bottom: 15px !important;
+        margin-top: 20px !important;
+    }
+}
+div.scroll-horizontal
+{
+    margin: 20px 0;
+}
+
+input[type=text], input[type=number], input[type=password]
+{
+    padding-left: 5px;
+}
+
+
+
 body{
+    
     background-color: #0d1117;
-    margin-top: 0px;
     color: #c9d1d9;
     font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji;
     font-size: 14px;
@@ -23,8 +69,10 @@ div{
 .root{
     border: 1px solid #30363d;
     margin: auto;
-    padding: 3%;
     width: fit-content;
+    padding: 20px;
+    border-radius: 10px;
+
 }
 
 table {
@@ -105,6 +153,7 @@ input:focus {
 }
 
 .do{
+    margin-top: 20px;
     width: 100%;
     background: #21262d;
 }
