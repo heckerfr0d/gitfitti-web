@@ -85,5 +85,38 @@ def main():
         return render_template('result.html', msg='ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.', form=request.form)
     return render_template('result.html', msg=f"SUCCESS! Created {nc*len(dates)} commits as {name} [{email}] in {repname}", form=request.form)
 
+@app.route('/contribute', methods=['GET', 'POST'])
+def contribute():
+    if request.method=='GET':
+        return render_template('contribute.html')
+    start = 0
+    for j in range(52):
+        if start:
+            break
+        for i in range(7):
+            if int(request.form[f'{i} {j}']):
+                start = j
+                break
+    end = 0
+    for j in range(51, -1, -1):
+        if end:
+            break
+        for i in range(7):
+            if int(request.form[f'{i} {j}']):
+                end = j
+                break
+    txt = ['' for i in range(7)]
+    for i in range(7):
+        for j in range(start, end+1):
+            if int(request.form[f'{i} {j}']):
+                txt[i] += '#'
+            else:
+                txt[i] += ' '
+    txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
+    with open('static/script.js', 'a') as f:
+        f.write(f"\ntxt['{request.form['ttg']}'] = {txt}")
+    return render_template('contribute.html')
+
+
 if __name__ == "__main__":
     app.run()
