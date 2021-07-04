@@ -124,7 +124,10 @@ def admin():
     global n
     if request.method=='GET':
         return render_template('admin.html', n=n)
-    repo = git.Repo(os.getcwd())
+    repo = git.cmd.Git().clone(f"https://{request.form['username']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+    with open('static/script.js', 'rb') as fin:
+        with open('gitfitti-web/static/script.js', 'wb') as fout:
+            shutil.copyfileobj(fin, fout)
     repo.git.add(update=True)
     author = git.Actor(request.form['name'], request.form['email'])
     repo.index.commit('-m', f'{n} public contributions :heart:', author=author)
