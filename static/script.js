@@ -479,3 +479,41 @@ $("button[class=\"btn btn-secondary c0\"]").mouseenter(function (event) {
     if (action)
         toggle($(this));
 });
+
+
+let theme = localStorage.getItem("theme")
+
+if(theme && theme==='light')
+{
+    console.log('Light theme')
+    document.getElementById("checkbox").checked = true
+    document.documentElement.setAttribute('theme', 'light');
+    document.getElementsByClassName("nextTheme")[0].innerHTML="Light Mode";
+}
+
+function clearTextfield()
+{
+    console.log('Clearing textfields..')
+    document.getElementById("url").value=""
+    document.getElementById("word").value=""
+}
+
+const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
+
+function changeTheme(e)
+{
+    if (e.target.checked)
+    {
+        document.documentElement.setAttribute('theme', 'light');
+        document.getElementsByClassName("nextTheme")[0].innerHTML="Light Mode";
+        localStorage.setItem('theme','light')
+    }
+    else
+    {
+        document.documentElement.setAttribute('theme', 'dark');
+        document.getElementsByClassName("nextTheme")[0].innerHTML="Dark Mode";
+        localStorage.setItem('theme','dark')
+    }
+}
+
+toggleSwitch.addEventListener('change', changeTheme, false);
