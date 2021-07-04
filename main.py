@@ -6,6 +6,7 @@ import shutil
 
 app = Flask(__name__)
 n = 0
+cont = []
 
 def getDates(year=None):
     if year:
@@ -66,7 +67,7 @@ def main():
         try:
             git.cmd.Git().clone(repurl)
         except:
-            return render_template('result.html', msg='ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.', form=request.form)
+            return render_template('main.html', extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
     rep = git.Repo.init(repname)
     nc = int(request.form['nc'])
     for date in dates:
@@ -82,8 +83,8 @@ def main():
         shutil.rmtree(repname)
     except:
         shutil.rmtree(repname)
-        return render_template('result.html', msg='ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.', form=request.form)
-    return render_template('result.html', msg=f"SUCCESS! Created {nc*len(dates)} commits as {name} [{email}] in {repname}", form=request.form)
+        return render_template('main.html', extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+    return render_template('main.html', extra=f"SUCCESS! Created {nc*len(dates)} commits as {name} [{email}] in {repname}", form=request.form)
 
 @app.route('/contribute', methods=['GET', 'POST'])
 def contribute():
@@ -115,28 +116,35 @@ def contribute():
                 txt[i] += ' '
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
     with open('static/script.js', 'a') as f:
-        f.write(f"\ntxt['{request.form['ttg']}'] = {txt}\n")
-        f.write(f"pub.push('{request.form['ttg']}');\n")
+        f.write(f"\ntxt['{request.form['alias']}'] = {txt}\n")
+        f.write(f"pub.push('{request.form['alias']}');\n")
+    if request.form['name']:
+        cont.append(request.form['name'])
     n += 1
-    return render_template('contribute.html')
+    return render_template('contribute.html', form=request.form)
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global n
     if request.method=='GET':
         return render_template('admin.html', n=n)
-    git.cmd.Git().clone(f"https://{request.form['username']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+    git.cmd.Git().clone(f"https://{request.form['name']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
     repo = git.Repo.init('gitfitti-web')
     with open('static/script.js', 'rb') as fin:
         with open('gitfitti-web/static/script.js', 'wb') as fout:
             shutil.copyfileobj(fin, fout)
     repo.git.add(update=True)
     author = git.Actor(request.form['name'], request.form['email'])
-    repo.index.commit('-m', f'merging {n} public contributions :heart:', author=author)
+    thanks = ""
+    if cont:
+        thanks = '@'+', @'.join(cont)
+    repo.index.commit(f'Merging {n} public contributions\n Thanks {thanks} :heart:', author=author)
     origin = repo.remote(name='origin')
     origin.push()
+    shutil.rmtree('gitfitti-web')
     n = 0
-    return render_template('admin.html', n=n)
+    cont.clear()
+    return render_template('admin.html', n=n, form=request.form)
 
 
 if __name__ == "__main__":

@@ -32,16 +32,20 @@
     <br>
     <div class="root">
         <form action="/" method="post">
+            {% block main %}
             <div>
-                <input class="textfield" type="text" name="username" placeholder="Username">
-                <input class="textfield" type="text" name="email" placeholder="Email">
-                <input class="textfield" type="password" name="password" placeholder="Password">
+                <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
+                <input class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
+                <input class="textfield" type="password" name="password" placeholder="Password" {% if form %} value="{{form['password']}}" {% endif %}>
             </div>
             <div>
-                <input class="textfield" type="text" name="repo" placeholder="Link to repo">
-                <input class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969">
-                <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1">
+                <input class="textfield" type="text" name="repo" placeholder="Link to repo" {% if form %} value="{{form['repo']}}" {% endif %}>
+                <input class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969" {% if form %} value="{{form['year']}}" {% endif %}>
+                <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" {% if form %} value="{{form['nc']}}" {% endif %}>
             </div>
+            {% endblock %}
+
+            {% block graph %}
             <div>
                 <div class="scroll-horizontal">
                     <table>
@@ -50,9 +54,10 @@
                             <tr>
                                 {% for j in range(52) %}
                                 <td>
-                                    <button type="button" name="{{i}} {{j}}" class="btn btn-secondary c0"></button>
+                                    {% if form %}{% set s = "btn btn-secondary c"+form[i~' '~j]%}{% else %}{% set s = 'btn btn-secondary c0' %}{% endif %}
+                                    <button type="button" name="{{i}} {{j}}" class="{{s}}"></button>
                                     {% for k in range(3) %}
-                                    {% if k==0 %}
+                                    {% if (form and form[i~' '~j]==''~k) or (not form and k==0) %}
                                     <input type="radio" name="{{i}} {{j}}" value={{k}} checked hidden>
                                     {% else %}
                                     <input type="radio" name="{{i}} {{j}}" value={{k}} hidden>
@@ -65,22 +70,21 @@
                         </tbody>
                     </table>
                 </div>
-
-                <input type="text" class="ttt" name="ttg" placeholder="Translate Text to Graffiti">
-
+                <input type="text" class="ttt" name="ttg" placeholder="Translate Text to Graffiti" {% if form %} value="{{form['ttg']}}" {% endif %}>
                 <input type="button" class="tr" name="translate" value="Translate">
                 <input type="button" class="tr" name="invert" value="Invert">
                 <input type="button" class="tr" name="clear" value="Clear">
-
-
             </div>
+            {% endblock %}
+
+            {% block submit %}
             <div>
                 <input type="submit" class="do" value="Do IT">
             </div>
+            {% endblock %}
         </form>
     </div>
 </body>
-    
 </html>
 
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -89,5 +93,8 @@
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
 
-{% block result %}
-{% endblock %}
+{% if extra %}
+<script>
+    alert("{{extra}}");
+</script>
+{% endif %}

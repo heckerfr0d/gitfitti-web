@@ -449,7 +449,7 @@ $('input[name="translate"]').click(function () {
     for (var i in pub) {
         if (text.includes(pub[i])) {
             txt['~'] = txt[pub[i]];
-            text.replace(pub[i], '~');
+            text = text.replaceAll(pub[i], '~');
         }
     }
     render(text);
@@ -472,7 +472,7 @@ $('input[name="invert"]').click(function () {
 
 let action = null;
 
-$("button[class=\"btn btn-secondary c0\"]").mousedown(function () {
+$("button[class!=\"tr\"]").mousedown(function () {
     toggle($(this));
     action = "not null";
 });
@@ -481,12 +481,12 @@ $(document).on("mouseup", function (event) {
     action = null;
 });
 
-$("button[class=\"btn btn-secondary c0\"]").on("mouseup click", function (event) {
+$("button[class!=\"tr\"]").on("mouseup click", function (event) {
     event.preventDefault();
     action = null;
 });
 
-$("button[class=\"btn btn-secondary c0\"]").mouseenter(function (event) {
+$("button[class!=\"tr\"]").mouseenter(function (event) {
     if (action)
         toggle($(this));
 });
@@ -523,3 +523,57 @@ function changeTheme(e) {
 }
 
 toggleSwitch.addEventListener('change', changeTheme, false);
+txt['annen'] = [
+	'                                                  ',
+	' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
+	'#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
+	'#### # # # # # # ### # # #   # # # ###  ##   ##  #',
+	'#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
+	'#  # #   # #   # ### #   #   #   # ### ###  ###  #',
+	'                                                  '
+];
+pub.push('annen');
+
+txt['annen'] = [
+	'                                                  ',
+	' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
+	'#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
+	'#### # # # # # # ### # # #   # # # ###  ##   ##  #',
+	'#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
+	'#  # #   # #   # ### #   #   #   # ### ###  ###  #',
+	'                                                  '
+];
+pub.push('annen');
+
+txt['annen'] = [
+	'                                                  ',
+	' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
+	'#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
+	'#### # # # # # # ### # # #   # # # ###  ##   ##  #',
+	'#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
+	'#  # #   # #   # ### #   #   #   # ### ###  ###  #',
+	'                                                  '
+];
+pub.push('annen');
+
+txt['annen'] = [
+	'                                                  ',
+	' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
+	'#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
+	'#### # # # # # # ### # # #   # # # ###  ##   ##  #',
+	'#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
+	'#  # #   # #   # ### #   #   #   # ### ###  ###  #',
+	'                                                  '
+];
+pub.push('annen');
+
+txt['<3'] = [
+	'     ',
+	'     ',
+	'## ##',
+	'#####',
+	' ### ',
+	'  #  ',
+	'     '
+];
+pub.push('<3');
