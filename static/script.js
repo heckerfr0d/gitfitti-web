@@ -45,6 +45,9 @@ var txt = {
     '?': Array(),
     '*': Array()
 };
+
+var pub = Array();
+
 txt['A'].push("    ");
 txt['A'].push(" aa ");
 txt['A'].push("a  a");
@@ -442,7 +445,14 @@ function render(text) {
 }
 
 $('input[name="translate"]').click(function () {
-    render($('input[name="ttg"]').val());
+    var text = $('input[name="ttg"]').val();
+    for (var i in pub) {
+        if (pub[i] in text) {
+            txt['~'] = txt[text];
+            text.replace(pub[i], '~');
+        }
+    }
+    render(text);
 });
 
 $('input[name="clear"]').click(function () {

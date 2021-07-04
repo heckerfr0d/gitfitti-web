@@ -115,7 +115,8 @@ def contribute():
                 txt[i] += ' '
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
     with open('static/script.js', 'a') as f:
-        f.write(f"\ntxt['{request.form['ttg']}'] = {txt}")
+        f.write(f"\ntxt['{request.form['ttg']}'] = {txt}\n")
+        f.write(f"pub.push({request.form['ttg']});\n")
     n += 1
     return render_template('contribute.html')
 
@@ -124,13 +125,14 @@ def admin():
     global n
     if request.method=='GET':
         return render_template('admin.html', n=n)
-    repo = git.cmd.Git().clone(f"https://{request.form['username']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+    git.cmd.Git().clone(f"https://{request.form['username']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+    repo = git.Repo.init('gitfitti-web')
     with open('static/script.js', 'rb') as fin:
         with open('gitfitti-web/static/script.js', 'wb') as fout:
             shutil.copyfileobj(fin, fout)
     repo.git.add(update=True)
     author = git.Actor(request.form['name'], request.form['email'])
-    repo.index.commit('-m', f'{n} public contributions :heart:', author=author)
+    repo.index.commit('-m', f'merging {n} public contributions :heart:', author=author)
     origin = repo.remote(name='origin')
     origin.push()
 
