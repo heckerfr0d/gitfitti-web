@@ -116,7 +116,7 @@ def contribute():
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
     with open('static/script.js', 'a') as f:
         f.write(f"\ntxt['{request.form['ttg']}'] = {txt}\n")
-        f.write(f"pub.push({request.form['ttg']});\n")
+        f.write(f"pub.push('{request.form['ttg']}');\n")
     n += 1
     return render_template('contribute.html')
 
@@ -135,6 +135,8 @@ def admin():
     repo.index.commit('-m', f'merging {n} public contributions :heart:', author=author)
     origin = repo.remote(name='origin')
     origin.push()
+    n = 0
+    return render_template('admin.html', n=n)
 
 
 if __name__ == "__main__":

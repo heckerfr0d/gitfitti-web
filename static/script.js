@@ -447,8 +447,8 @@ function render(text) {
 $('input[name="translate"]').click(function () {
     var text = $('input[name="ttg"]').val();
     for (var i in pub) {
-        if (pub[i] in text) {
-            txt['~'] = txt[text];
+        if (text.includes(pub[i])) {
+            txt['~'] = txt[pub[i]];
             text.replace(pub[i], '~');
         }
     }
