@@ -119,7 +119,7 @@ def contribute():
     n += 1
     return render_template('contribute.html')
 
-@app.route('/admin')
+@app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global n
     if request.method=='GET':

@@ -165,6 +165,10 @@ input:focus {
     box-shadow: 0 0 0 3px #1e60d5;
 }
 
+.admin{
+    width: 100%;
+}
+
 .ttt{
     width: 68%;
 }
