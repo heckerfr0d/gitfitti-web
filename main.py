@@ -5,7 +5,7 @@ import os
 import shutil
 
 app = Flask(__name__)
-
+n = 0
 
 def getDates(year=None):
     if year:
@@ -87,6 +87,7 @@ def main():
 
 @app.route('/contribute', methods=['GET', 'POST'])
 def contribute():
+    global n
     if request.method=='GET':
         return render_template('contribute.html')
     start = 0
@@ -115,7 +116,20 @@ def contribute():
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
     with open('static/script.js', 'a') as f:
         f.write(f"\ntxt['{request.form['ttg']}'] = {txt}")
+    n += 1
     return render_template('contribute.html')
+
+@app.route('/admin')
+def admin():
+    global n
+    if request.method=='GET':
+        return render_template('admin.html', n=n)
+    repo = git.Repo(os.getcwd())
+    repo.git.add(update=True)
+    author = git.Actor(request.form['name'], request.form['email'])
+    repo.index.commit('-m', f'{n} public contributions :heart:', author=author)
+    origin = repo.remote(name='origin')
+    origin.push()
 
 
 if __name__ == "__main__":

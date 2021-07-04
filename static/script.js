@@ -1,30 +1,30 @@
 var txt = {
-    'a': Array(),
-    'b': Array(),
-    'c': Array(),
-    'd': Array(),
-    'e': Array(),
-    'f': Array(),
-    'g': Array(),
-    'h': Array(),
-    'i': Array(),
-    'j': Array(),
-    'k': Array(),
-    'l': Array(),
-    'm': Array(),
-    'n': Array(),
-    'o': Array(),
-    'p': Array(),
-    'q': Array(),
-    'r': Array(),
-    's': Array(),
-    't': Array(),
-    'u': Array(),
-    'v': Array(),
-    'w': Array(),
-    'x': Array(),
-    'y': Array(),
-    'z': Array(),
+    'A': Array(),
+    'B': Array(),
+    'C': Array(),
+    'D': Array(),
+    'E': Array(),
+    'F': Array(),
+    'G': Array(),
+    'H': Array(),
+    'I': Array(),
+    'J': Array(),
+    'K': Array(),
+    'L': Array(),
+    'M': Array(),
+    'N': Array(),
+    'O': Array(),
+    'P': Array(),
+    'Q': Array(),
+    'R': Array(),
+    'S': Array(),
+    'T': Array(),
+    'U': Array(),
+    'V': Array(),
+    'W': Array(),
+    'X': Array(),
+    'Y': Array(),
+    'Z': Array(),
     '.': Array(),
     ',': Array(),
     ';': Array(),
@@ -45,213 +45,213 @@ var txt = {
     '?': Array(),
     '*': Array()
 };
-txt['a'].push("    ");
-txt['a'].push(" aa ");
-txt['a'].push("a  a");
-txt['a'].push("aaaa");
-txt['a'].push("a  a");
-txt['a'].push("a  a");
-txt['a'].push("    ");
+txt['A'].push("    ");
+txt['A'].push(" aa ");
+txt['A'].push("a  a");
+txt['A'].push("aaaa");
+txt['A'].push("a  a");
+txt['A'].push("a  a");
+txt['A'].push("    ");
 
-txt['b'].push("    ");
-txt['b'].push("bbb ");
-txt['b'].push("b  b");
-txt['b'].push("bbbb");
-txt['b'].push("b  b");
-txt['b'].push("bbb ");
-txt['b'].push("    ");
+txt['B'].push("    ");
+txt['B'].push("bbb ");
+txt['B'].push("b  b");
+txt['B'].push("bbbb");
+txt['B'].push("b  b");
+txt['B'].push("bbb ");
+txt['B'].push("    ");
 
-txt['c'].push("    ");
-txt['c'].push(" cc ");
-txt['c'].push("c  c");
-txt['c'].push("c   ");
-txt['c'].push("c  c");
-txt['c'].push(" cc ");
-txt['c'].push("    ");
+txt['C'].push("    ");
+txt['C'].push(" cc ");
+txt['C'].push("c  c");
+txt['C'].push("c   ");
+txt['C'].push("c  c");
+txt['C'].push(" cc ");
+txt['C'].push("    ");
 
-txt['d'].push("    ");
-txt['d'].push("ddd ");
-txt['d'].push("d  d");
-txt['d'].push("d  d");
-txt['d'].push("d  d");
-txt['d'].push("ddd ");
-txt['d'].push("    ");
+txt['D'].push("    ");
+txt['D'].push("ddd ");
+txt['D'].push("d  d");
+txt['D'].push("d  d");
+txt['D'].push("d  d");
+txt['D'].push("ddd ");
+txt['D'].push("    ");
 
-txt['e'].push("   ");
-txt['e'].push("eee");
-txt['e'].push("e  ");
-txt['e'].push("eee");
-txt['e'].push("e  ");
-txt['e'].push("eee");
-txt['e'].push("   ");
+txt['E'].push("   ");
+txt['E'].push("eee");
+txt['E'].push("e  ");
+txt['E'].push("eee");
+txt['E'].push("e  ");
+txt['E'].push("eee");
+txt['E'].push("   ");
 
-txt['f'].push("   ");
-txt['f'].push("fff");
-txt['f'].push("f  ");
-txt['f'].push("fff");
-txt['f'].push("f  ");
-txt['f'].push("f  ");
-txt['f'].push("   ");
+txt['F'].push("   ");
+txt['F'].push("fff");
+txt['F'].push("f  ");
+txt['F'].push("fff");
+txt['F'].push("f  ");
+txt['F'].push("f  ");
+txt['F'].push("   ");
 
-txt['g'].push("    ");
-txt['g'].push(" ggg");
-txt['g'].push("g   ");
-txt['g'].push("g gg");
-txt['g'].push("g  g");
-txt['g'].push(" gg ");
-txt['g'].push("    ");
+txt['G'].push("    ");
+txt['G'].push(" ggg");
+txt['G'].push("g   ");
+txt['G'].push("g gg");
+txt['G'].push("g  g");
+txt['G'].push(" gg ");
+txt['G'].push("    ");
 
-txt['h'].push("    ");
-txt['h'].push("h  h");
-txt['h'].push("h  h");
-txt['h'].push("hhhh");
-txt['h'].push("h  h");
-txt['h'].push("h  h");
-txt['h'].push("    ");
+txt['H'].push("    ");
+txt['H'].push("h  h");
+txt['H'].push("h  h");
+txt['H'].push("hhhh");
+txt['H'].push("h  h");
+txt['H'].push("h  h");
+txt['H'].push("    ");
 
-txt['i'].push(" ");
-txt['i'].push("i");
-txt['i'].push("i");
-txt['i'].push("i");
-txt['i'].push("i");
-txt['i'].push("i");
-txt['i'].push(" ");
+txt['I'].push(" ");
+txt['I'].push("i");
+txt['I'].push("i");
+txt['I'].push("i");
+txt['I'].push("i");
+txt['I'].push("i");
+txt['I'].push(" ");
 
-txt['j'].push("    ");
-txt['j'].push("   j");
-txt['j'].push("   j");
-txt['j'].push("   j");
-txt['j'].push("j  j");
-txt['j'].push(" jj ");
-txt['j'].push("    ");
+txt['J'].push("    ");
+txt['J'].push("   j");
+txt['J'].push("   j");
+txt['J'].push("   j");
+txt['J'].push("j  j");
+txt['J'].push(" jj ");
+txt['J'].push("    ");
 
-txt['k'].push("    ");
-txt['k'].push("k  k");
-txt['k'].push("k k ");
-txt['k'].push("kk  ");
-txt['k'].push("k k ");
-txt['k'].push("k  k");
-txt['k'].push("    ");
+txt['K'].push("    ");
+txt['K'].push("k  k");
+txt['K'].push("k k ");
+txt['K'].push("kk  ");
+txt['K'].push("k k ");
+txt['K'].push("k  k");
+txt['K'].push("    ");
 
-txt['l'].push("   ");
-txt['l'].push("l  ");
-txt['l'].push("l  ");
-txt['l'].push("l  ");
-txt['l'].push("l  ");
-txt['l'].push("lll");
-txt['l'].push("   ");
+txt['L'].push("   ");
+txt['L'].push("l  ");
+txt['L'].push("l  ");
+txt['L'].push("l  ");
+txt['L'].push("l  ");
+txt['L'].push("lll");
+txt['L'].push("   ");
 
-txt['m'].push("     ");
-txt['m'].push("m   m");
-txt['m'].push("mm mm");
-txt['m'].push("m m m");
-txt['m'].push("m   m");
-txt['m'].push("m   m");
-txt['m'].push("     ");
+txt['M'].push("     ");
+txt['M'].push("m   m");
+txt['M'].push("mm mm");
+txt['M'].push("m m m");
+txt['M'].push("m   m");
+txt['M'].push("m   m");
+txt['M'].push("     ");
 
-txt['n'].push("     ");
-txt['n'].push("n   n");
-txt['n'].push("nn  n");
-txt['n'].push("n n n");
-txt['n'].push("n  nn");
-txt['n'].push("n   n");
-txt['n'].push("     ");
+txt['N'].push("     ");
+txt['N'].push("n   n");
+txt['N'].push("nn  n");
+txt['N'].push("n n n");
+txt['N'].push("n  nn");
+txt['N'].push("n   n");
+txt['N'].push("     ");
 
-txt['o'].push("    ");
-txt['o'].push(" oo ");
-txt['o'].push("o  o");
-txt['o'].push("o  o");
-txt['o'].push("o  o");
-txt['o'].push(" oo ");
-txt['o'].push("    ");
+txt['O'].push("    ");
+txt['O'].push(" oo ");
+txt['O'].push("o  o");
+txt['O'].push("o  o");
+txt['O'].push("o  o");
+txt['O'].push(" oo ");
+txt['O'].push("    ");
 
-txt['p'].push("    ");
-txt['p'].push("ppp ");
-txt['p'].push("p  p");
-txt['p'].push("ppp ");
-txt['p'].push("p   ");
-txt['p'].push("p   ");
-txt['p'].push("    ");
+txt['P'].push("    ");
+txt['P'].push("ppp ");
+txt['P'].push("p  p");
+txt['P'].push("ppp ");
+txt['P'].push("p   ");
+txt['P'].push("p   ");
+txt['P'].push("    ");
 
-txt['q'].push("    ");
-txt['q'].push(" qq ");
-txt['q'].push("q  q");
-txt['q'].push("q  q");
-txt['q'].push("q  q");
-txt['q'].push(" qq ");
-txt['q'].push("   q");
+txt['Q'].push("    ");
+txt['Q'].push(" qq ");
+txt['Q'].push("q  q");
+txt['Q'].push("q  q");
+txt['Q'].push("q  q");
+txt['Q'].push(" qq ");
+txt['Q'].push("   q");
 
-txt['r'].push("    ");
-txt['r'].push("rrr ");
-txt['r'].push("r  r");
-txt['r'].push("rrr ");
-txt['r'].push("r r ");
-txt['r'].push("r  r");
-txt['r'].push("    ");
+txt['R'].push("    ");
+txt['R'].push("rrr ");
+txt['R'].push("r  r");
+txt['R'].push("rrr ");
+txt['R'].push("r r ");
+txt['R'].push("r  r");
+txt['R'].push("    ");
 
-txt['s'].push("    ");
-txt['s'].push(" sss");
-txt['s'].push("s   ");
-txt['s'].push(" ss ");
-txt['s'].push("   s");
-txt['s'].push("sss ");
-txt['s'].push("    ");
+txt['S'].push("    ");
+txt['S'].push(" sss");
+txt['S'].push("s   ");
+txt['S'].push(" ss ");
+txt['S'].push("   s");
+txt['S'].push("sss ");
+txt['S'].push("    ");
 
-txt['t'].push("   ");
-txt['t'].push("ttt");
-txt['t'].push(" t ");
-txt['t'].push(" t ");
-txt['t'].push(" t ");
-txt['t'].push(" t ");
-txt['t'].push("   ");
+txt['T'].push("   ");
+txt['T'].push("ttt");
+txt['T'].push(" t ");
+txt['T'].push(" t ");
+txt['T'].push(" t ");
+txt['T'].push(" t ");
+txt['T'].push("   ");
 
-txt['u'].push("    ");
-txt['u'].push("u  u");
-txt['u'].push("u  u");
-txt['u'].push("u  u");
-txt['u'].push("u  u");
-txt['u'].push(" uu ");
-txt['u'].push("    ");
+txt['U'].push("    ");
+txt['U'].push("u  u");
+txt['U'].push("u  u");
+txt['U'].push("u  u");
+txt['U'].push("u  u");
+txt['U'].push(" uu ");
+txt['U'].push("    ");
 
-txt['v'].push("     ");
-txt['v'].push("v   v");
-txt['v'].push("v   v");
-txt['v'].push(" v v ");
-txt['v'].push(" v v ");
-txt['v'].push("  v  ");
-txt['v'].push("     ");
+txt['V'].push("     ");
+txt['V'].push("v   v");
+txt['V'].push("v   v");
+txt['V'].push(" v v ");
+txt['V'].push(" v v ");
+txt['V'].push("  v  ");
+txt['V'].push("     ");
 
-txt['w'].push("     ");
-txt['w'].push("w   w");
-txt['w'].push("w w w");
-txt['w'].push("w w w");
-txt['w'].push("w w w");
-txt['w'].push(" w w ");
-txt['w'].push("     ");
+txt['W'].push("     ");
+txt['W'].push("w   w");
+txt['W'].push("w w w");
+txt['W'].push("w w w");
+txt['W'].push("w w w");
+txt['W'].push(" w w ");
+txt['W'].push("     ");
 
-txt['x'].push("     ");
-txt['x'].push("x   x");
-txt['x'].push(" x x ");
-txt['x'].push("  x  ");
-txt['x'].push(" x x ");
-txt['x'].push("x   x");
-txt['x'].push("     ");
+txt['X'].push("     ");
+txt['X'].push("x   x");
+txt['X'].push(" x x ");
+txt['X'].push("  x  ");
+txt['X'].push(" x x ");
+txt['X'].push("x   x");
+txt['X'].push("     ");
 
-txt['y'].push("     ");
-txt['y'].push("y   y");
-txt['y'].push(" y y ");
-txt['y'].push("  y  ");
-txt['y'].push("  y  ");
-txt['y'].push("  y  ");
-txt['y'].push("     ");
+txt['Y'].push("     ");
+txt['Y'].push("y   y");
+txt['Y'].push(" y y ");
+txt['Y'].push("  y  ");
+txt['Y'].push("  y  ");
+txt['Y'].push("  y  ");
+txt['Y'].push("     ");
 
-txt['z'].push("   ");
-txt['z'].push("zzz");
-txt['z'].push("  z");
-txt['z'].push(" z ");
-txt['z'].push("z  ");
-txt['z'].push("zzz");
-txt['z'].push("   ");
+txt['Z'].push("   ");
+txt['Z'].push("zzz");
+txt['Z'].push("  z");
+txt['Z'].push(" z ");
+txt['Z'].push("z  ");
+txt['Z'].push("zzz");
+txt['Z'].push("   ");
 
 txt['.'].push(" ");
 txt['.'].push(" ");
