@@ -428,20 +428,21 @@ function render(text) {
     else {
         var offset = (((52 - w) / 2) >> 0);
         for (var c in text) {
-            for (var k = 0; k < 7; k++)
-                for (var j = offset; j < offset + (txt[text[c]][j - offset].length); j++)
-                    if (txt[text[c]][k][j - offset] != ' ')
-                        toggle($('button[name="' + String(k) + ' ' + String(j) + '"]'));
-            offset += txt[text[c]][j - offset].length;
-            if (c != ' ')
-                offset++;
+            if (text[c] in txt) {
+                for (var k = 0; k < 7; k++)
+                    for (var j = offset; j < offset + (txt[text[c]][j - offset].length); j++)
+                        if (txt[text[c]][k][j - offset] != ' ')
+                            toggle($('button[name="' + String(k) + ' ' + String(j) + '"]'));
+                offset += txt[text[c]][j - offset].length;
+                if (c != ' ')
+                    offset++;
+            }
         }
     }
 }
 
 $('input[name="translate"]').click(function () {
-    var text = $('input[name="ttg"]').val();
-    render(text.toLowerCase());
+    render($('input[name="ttg"]').val());
 });
 
 $('input[name="clear"]').click(function () {
@@ -483,36 +484,31 @@ $("button[class=\"btn btn-secondary c0\"]").mouseenter(function (event) {
 
 let theme = localStorage.getItem("theme")
 
-if(theme && theme==='light')
-{
+if (theme && theme === 'light') {
     console.log('Light theme')
     document.getElementById("checkbox").checked = true
     document.documentElement.setAttribute('theme', 'light');
-    document.getElementsByClassName("nextTheme")[0].innerHTML="Light Mode";
+    document.getElementsByClassName("nextTheme")[0].innerHTML = "Light Mode";
 }
 
-function clearTextfield()
-{
+function clearTextfield() {
     console.log('Clearing textfields..')
-    document.getElementById("url").value=""
-    document.getElementById("word").value=""
+    document.getElementById("url").value = ""
+    document.getElementById("word").value = ""
 }
 
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');
 
-function changeTheme(e)
-{
-    if (e.target.checked)
-    {
+function changeTheme(e) {
+    if (e.target.checked) {
         document.documentElement.setAttribute('theme', 'light');
-        document.getElementsByClassName("nextTheme")[0].innerHTML="Light Mode";
-        localStorage.setItem('theme','light')
+        document.getElementsByClassName("nextTheme")[0].innerHTML = "Light Mode";
+        localStorage.setItem('theme', 'light')
     }
-    else
-    {
+    else {
         document.documentElement.setAttribute('theme', 'dark');
-        document.getElementsByClassName("nextTheme")[0].innerHTML="Dark Mode";
-        localStorage.setItem('theme','dark')
+        document.getElementsByClassName("nextTheme")[0].innerHTML = "Dark Mode";
+        localStorage.setItem('theme', 'dark')
     }
 }
 
