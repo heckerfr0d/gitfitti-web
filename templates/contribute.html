@@ -12,7 +12,7 @@
 <div>
     <input type="text" class="admin" name="alias" placeholder="Alias (for the design)" {% if form %} value="{{form['alias']}}" {% endif %}>
     <input type="text" class="admin" name="name" placeholder="GitHub username (to be thanked in the commit message)" {% if form %} value="{{form['name']}}" {% endif %}>
-    <input type="text" class="admin" name="auth" placeholder="Personal Access Token (If you want contributor status)" {% if form %} value="{{form['auth']}}" {% endif %}>
+    <input type="password" class="admin" name="auth" placeholder="Personal Access Token (If you want contributor status)" {% if form %} value="{{form['auth']}}" {% endif %}>
 </div>
 <div>
     <input type="submit" class="do" value="Save">
