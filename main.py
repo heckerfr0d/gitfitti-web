@@ -3,10 +3,14 @@ import git
 import datetime
 import os
 import shutil
+import requests
+import base64
+import json
 
 app = Flask(__name__)
 n = 0
 cont = []
+
 
 def getDates(year=None):
     if year:
@@ -28,7 +32,7 @@ def getDates(year=None):
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'GET':
-        return render_template('main.html')
+        return render_template('main.html', action="/")
     # a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     # text_to_render = request.form['text']
     # font = Font('Fonts/subway-ticker.ttf', 8)
@@ -67,7 +71,7 @@ def main():
         try:
             git.cmd.Git().clone(repurl)
         except:
-            return render_template('main.html', extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+            return render_template('main.html', action="/", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
     rep = git.Repo.init(repname)
     nc = int(request.form['nc'])
     for date in dates:
@@ -83,14 +87,15 @@ def main():
         shutil.rmtree(repname)
     except:
         shutil.rmtree(repname)
-        return render_template('main.html', extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
-    return render_template('main.html', extra=f'SUCCESS! Created {nc*len(dates)} commits as <a href="https://github.com/{name}">@{name}</a> in <a href="{request.form["repo"]}">{repname}</a>', form=request.form)
+        return render_template('main.html', action="/", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+    return render_template('main.html', action="/", extra=f'SUCCESS! Created {nc*len(dates)} commits as <a href="https://github.com/{name}">@{name}</a> in <a href="{request.form["repo"]}">{repname}</a>', form=request.form)
+
 
 @app.route('/contribute', methods=['GET', 'POST'])
 def contribute():
     global n
-    if request.method=='GET':
-        return render_template('contribute.html')
+    if request.method == 'GET':
+        return render_template('contribute.html', action="/contribute")
     start = 0
     for j in range(52):
         if start:
@@ -118,17 +123,49 @@ def contribute():
     with open('static/script.js', 'a') as f:
         f.write(f"\ntxt['{request.form['alias']}'] = {txt}\n")
         f.write(f"pub.push('{request.form['alias']}');\n")
-    if request.form['name']:
-        cont.append(request.form['name'])
-    n += 1
-    return render_template('contribute.html', form=request.form)
+    if request.form['auth']:
+        headers = {
+            'Accept': 'application/vnd.github.v3+json',
+            'Authorization': 'token '+request.form['auth']
+        }
+        response = requests.post(
+            'https://api.github.com/repos/heckerfr0d/gitfitti-web/forks', headers=headers)
+        print(response)
+        url = "https://api.github.com/repos/"+request.form['name']+"/gitfitti-web/contents/static/script.js"
+        base64content = base64.b64encode(open("static/script.js", "rb").read())
+        data = requests.get(url+'?ref=main', headers=headers).json()
+        sha = data['sha']
+        message = json.dumps({"message": "Adding " + request.form['alias'] + " to js dict",
+                              "branch": "main",
+                              "content": base64content.decode("utf-8"),
+                              "sha": sha
+                              })
+        res = requests.put(url, data=message, headers=headers)
+        print(res)
+        message = json.dumps({
+            "title": "Expanding js dict",
+            "body": "Added '" + request.form['alias'] + "' to js dict",
+            "head": request.form['name'] + ":main",
+            "base": "main"
+        })
+        print(headers)
+        print(message)
+        print(requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
+              data=message, headers=headers))
+    else:
+        if request.form['name']:
+            cont.append(request.form['name'])
+        n += 1
+    return render_template('contribute.html', action="/contribute", form=request.form)
+
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
     global n
-    if request.method=='GET':
-        return render_template('admin.html', n=n)
-    git.cmd.Git().clone(f"https://{request.form['name']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+    if request.method == 'GET':
+        return render_template('admin.html', action="/admin", n=n)
+    git.cmd.Git().clone(
+        f"https://{request.form['name']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
     repo = git.Repo.init('gitfitti-web')
     with open('static/script.js', 'rb') as fin:
         with open('gitfitti-web/static/script.js', 'wb') as fout:
@@ -138,13 +175,14 @@ def admin():
     thanks = ""
     if cont:
         thanks = '@'+', @'.join(cont)
-    repo.index.commit(f'Merging {n} public contributions\n Thanks {thanks} :heart:', author=author)
+    repo.index.commit(
+        f'Merging {n} public contributions\n Thanks {thanks} :heart:', author=author)
     origin = repo.remote(name='origin')
     origin.push()
     shutil.rmtree('gitfitti-web')
     n = 0
     cont.clear()
-    return render_template('admin.html', n=n, form=request.form)
+    return render_template('admin.html', action="/admin", n=n, form=request.form)
 
 
 if __name__ == "__main__":

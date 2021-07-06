@@ -37,7 +37,7 @@
     {% endif %}
     <br>
     <div class="root">
-        <form action="/" method="post">
+        <form action={{action}} method="post">
             {% block main %}
             <div>
                 <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>

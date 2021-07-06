@@ -1,12 +1,18 @@
 {% extends "main.html" %}
 
 {% block main %}
+<p class=message id="contribute">
+    Anyone can contribute! Simply draw on the grid below and give it a name. Changes are effective immediately!
+    Credits will be given in the commit message. If you want to receive contributor status instead, <a href="https://github.com/settings/tokens">generate a Personal Access Token</a>
+    and a fork will be created and a PR submitted in your account.
+</p>
 {% endblock %}
 
 {% block submit %}
 <div>
     <input type="text" class="admin" name="alias" placeholder="Alias (for the design)" {% if form %} value="{{form['alias']}}" {% endif %}>
     <input type="text" class="admin" name="name" placeholder="GitHub username (to be thanked in the commit message)" {% if form %} value="{{form['name']}}" {% endif %}>
+    <input type="text" class="admin" name="auth" placeholder="Personal Access Token (If you want contributor status)" {% if form %} value="{{form['auth']}}" {% endif %}>
 </div>
 <div>
     <input type="submit" class="do" value="Save">

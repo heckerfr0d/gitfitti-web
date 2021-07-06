@@ -128,6 +128,11 @@ div{
     position: relative;
 }
 
+#contribute {
+    border-radius: 6px;
+    max-width: 676px;
+}
+
 .close {
     color: var(--color-alert-info-text);
     background: transparent;
