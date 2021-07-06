@@ -6,7 +6,7 @@
 {% block submit %}
 <div>
     <input type="text" class="admin" name="alias" placeholder="Alias (for the design)" {% if form %} value="{{form['alias']}}" {% endif %}>
-    <input type="text" class="admin" name="name" placeholder="GitHub username (optional, for credits)" {% if form %} value="{{form['name']}}" {% endif %}>
+    <input type="text" class="admin" name="name" placeholder="GitHub username (to be thanked in the commit message)" {% if form %} value="{{form['name']}}" {% endif %}>
 </div>
 <div>
     <input type="submit" class="do" value="Save">

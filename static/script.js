@@ -470,6 +470,10 @@ $('input[name="invert"]').click(function () {
         toggle(buttons[i]);
 });
 
+function dismiss() {
+    $('div[name="result"]').hide();
+}
+
 let action = null;
 
 $("button[class!=\"tr\"]").mousedown(function () {
@@ -499,12 +503,6 @@ if (theme && theme === 'light') {
     document.getElementById("checkbox").checked = true
     document.documentElement.setAttribute('theme', 'light');
     document.getElementsByClassName("nextTheme")[0].innerHTML = "Light Mode";
-}
-
-function clearTextfield() {
-    console.log('Clearing textfields..')
-    document.getElementById("url").value = ""
-    document.getElementById("word").value = ""
 }
 
 const toggleSwitch = document.querySelector('.theme-switch input[type="checkbox"]');

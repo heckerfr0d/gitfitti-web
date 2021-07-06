@@ -5,6 +5,9 @@
     --root-border: #30363d;
     --navbar-color: #409eff;
     --navbar-bg-color: #161b22;
+    --color-alert-info-bg: rgba(56, 139, 253, 0.15);
+    --color-alert-info-border: rgba(56, 139, 253, 0.4);
+    --color-alert-info-text: #58a6ff;
     --input-bg-color: #0d1117;
     --input-border: rgba(240, 246, 252, 0.1);
     --input-bh: #8b949e;
@@ -29,6 +32,9 @@
     --root-border: #d0d7de;
     --navbar-color: #0969da;
     --navbar-bg-color: #f6f8fa;
+    --color-alert-info-bg: #ddf4ff;
+    --color-alert-info-border: rgba(84, 174, 255, 0.4);
+    --color-alert-info-text: #0969da;
     --input-bg-color: #fff;
     --input-border: #d0d7de;
     --input-bh: #b6bbc0;
@@ -112,6 +118,29 @@ body{
 
 div{
     margin: 1px auto;
+}
+
+.message{
+    background-image: linear-gradient(var(--color-alert-info-bg),var(--color-alert-info-bg));
+    border: 1px solid var(--color-alert-info-border);
+    color: var(--color-alert-info-text);
+    padding: 20px 16px;
+    position: relative;
+}
+
+.close {
+    color: var(--color-alert-info-text);
+    background: transparent;
+    border: none;
+    font-size: 20px;
+    margin: 4px 2px;
+    position: absolute;
+    top: 0px;
+    right: 0px;
+}
+
+.close:hover{
+    color: var(--color-alert-info-border);
 }
 
 .root{

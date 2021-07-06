@@ -84,7 +84,7 @@ def main():
     except:
         shutil.rmtree(repname)
         return render_template('main.html', extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
-    return render_template('main.html', extra=f"SUCCESS! Created {nc*len(dates)} commits as {name} [{email}] in {repname}", form=request.form)
+    return render_template('main.html', extra=f'SUCCESS! Created {nc*len(dates)} commits as <a href="https://github.com/{name}">@{name}</a> in <a href="{request.form["repo"]}">{repname}</a>', form=request.form)
 
 @app.route('/contribute', methods=['GET', 'POST'])
 def contribute():

@@ -29,6 +29,12 @@
         </div>
 
     </nav>
+    {% if extra %}
+    <div class="message" name="result">
+        {{extra}}
+        <button class="close" type="button" aria-label="Dismiss this message" onclick="dismiss()">&#10005;</button>
+    </div>
+    {% endif %}
     <br>
     <div class="root">
         <form action="/" method="post">
@@ -92,9 +98,3 @@
     crossorigin="anonymous"></script>
 
 <script src="{{ url_for('static', filename='script.js') }}"></script>
-
-{% if extra %}
-<script>
-    alert("{{extra}}");
-</script>
-{% endif %}
