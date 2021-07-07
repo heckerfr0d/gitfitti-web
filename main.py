@@ -128,9 +128,8 @@ def contribute():
             'Accept': 'application/vnd.github.v3+json',
             'Authorization': 'token '+request.form['auth']
         }
-        response = requests.post(
+        requests.post(
             'https://api.github.com/repos/heckerfr0d/gitfitti-web/forks', headers=headers)
-        print(response)
         url = "https://api.github.com/repos/"+request.form['name']+"/gitfitti-web/contents/static/script.js"
         base64content = base64.b64encode(open("static/script.js", "rb").read())
         data = requests.get(url+'?ref=main', headers=headers).json()
@@ -140,8 +139,7 @@ def contribute():
                               "content": base64content.decode("utf-8"),
                               "sha": sha
                               })
-        res = requests.put(url, data=message, headers=headers)
-        print(res)
+        requests.put(url, data=message, headers=headers)
         message = json.dumps({
             "title": "Expanding js dict",
             "body": "Added '" + request.form['alias'] + "' to js dict",
@@ -150,13 +148,14 @@ def contribute():
         })
         print(headers)
         print(message)
-        print(requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
-              data=message, headers=headers))
+        requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
+              data=message, headers=headers)
+        return render_template('contribute.html', action="/contribute", form=request.form, extra='PR opened as <a href="https://github.com/'+request.form['name']+'">@'+request.form['name']+"</a>")
     else:
         if request.form['name']:
             cont.append(request.form['name'])
         n += 1
-    return render_template('contribute.html', action="/contribute", form=request.form)
+    return render_template('contribute.html', action="/contribute", form=request.form, extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.')
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -183,6 +182,11 @@ def admin():
     n = 0
     cont.clear()
     return render_template('admin.html', action="/admin", n=n, form=request.form)
+
+@app.route('/schedule', methods=['GET', 'POST'])
+def schedule():
+    if request.method=='GET':
+        return render_template('slogin.html')
 
 
 if __name__ == "__main__":
