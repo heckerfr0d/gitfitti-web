@@ -32,6 +32,12 @@
     {% if extra %}
     <div class="message" name="result">
         {{extra}}
+        {% if n %}
+        SUCCESS! Created {{n}} commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
+        {% endif %}
+        {% if pr %}
+        Pull Request opened/updated! <a href={{pr}}>Check it out!</a>
+        {% endif %}
         <button class="close" type="button" aria-label="Dismiss this message" onclick="dismiss()">&#10005;</button>
     </div>
     {% endif %}
@@ -42,7 +48,7 @@
             <div>
                 <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
                 <input class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
-                <input class="textfield" type="password" name="password" placeholder="Password" {% if form %} value="{{form['password']}}" {% endif %}>
+                <input class="textfield" type="password" name="password" placeholder="Password/Personal Access Token (Repo scope)" {% if form %} value="{{form['password']}}" {% endif %}>
             </div>
             <div>
                 <input class="textfield" type="text" name="repo" placeholder="Link to repo" {% if form %} value="{{form['repo']}}" {% endif %}>

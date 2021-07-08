@@ -6,10 +6,13 @@ import shutil
 import requests
 import base64
 import json
+# import psycopg2
 
 app = Flask(__name__)
 n = 0
 cont = []
+# DATABASE_URL = os.environ['DATABASE_URL']
+# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
 
 
 def getDates(year=None):
@@ -88,7 +91,7 @@ def main():
     except:
         shutil.rmtree(repname)
         return render_template('main.html', action="/", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
-    return render_template('main.html', action="/", extra=f'SUCCESS! Created {nc*len(dates)} commits as <a href="https://github.com/{name}">@{name}</a> in <a href="{request.form["repo"]}">{repname}</a>', form=request.form)
+    return render_template('main.html', action="/", extra=' ', n=nc*len(dates), profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form)
 
 
 @app.route('/contribute', methods=['GET', 'POST'])
@@ -148,9 +151,9 @@ def contribute():
         })
         print(headers)
         print(message)
-        requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
-              data=message, headers=headers)
-        return render_template('contribute.html', action="/contribute", form=request.form, extra='PR opened as <a href="https://github.com/'+request.form['name']+'">@'+request.form['name']+"</a>")
+        PR = requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
+              data=message, headers=headers).json()
+        return render_template('contribute.html', action="/contribute", form=request.form, extra=' ', pr=PR['html_url'])
     else:
         if request.form['name']:
             cont.append(request.form['name'])
@@ -183,11 +186,17 @@ def admin():
     cont.clear()
     return render_template('admin.html', action="/admin", n=n, form=request.form)
 
-@app.route('/schedule', methods=['GET', 'POST'])
-def schedule():
-    if request.method=='GET':
-        return render_template('slogin.html')
-
+# @app.route('/schedule', methods=['GET', 'POST'])
+# def schedule():
+#     if request.method=='GET':
+#         return render_template('slogin.html')
+#     cursor = conn.cursor()
+#     cursor.execute("CREATE TABLE IF NOT EXISTS users (id serial primary key, name text not NULL, email text not NULL UNIQUE, auth text not NULL)")
+#     cursor.execute("CREATE TABLE %s (a INTEGER[][])", (request.form['name'],))
+#     cursor.execute("INSERT INTO users (name, email, auth) VALUES (%s, %s, %s)", (request.form['name'], request.form['email'], request.form['auth']))
+#     cursor.commit()
+#     cursor.close()
+#     return render_template()
 
 if __name__ == "__main__":
     app.run()
