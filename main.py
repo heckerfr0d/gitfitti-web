@@ -210,7 +210,7 @@ def register():
         return render_template('register.html', extra='Username already registered!')
     conn.commit()
     cursor.close()
-    return redirect(f"/users/{request.form['name']}", code=307)
+    return render_template("user.html", action=f"/users/{request.form['name']}/add")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -223,7 +223,7 @@ def login():
     username, password = cursor.fetchone()
     cursor.close()
     if hashlib.sha3_512(request.form['password'].encode()).hexdigest() == password:
-        return redirect(f"/users/{username}", code=307)
+        return render_template("user.html", action=f"/users/{username}/add")
     return render_template('login.html', extra='Invalid username or password!')
 
 
@@ -245,7 +245,7 @@ def add(username):
         sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
     conn.commit()
     cursor.close()
-    return redirect(f'/users/{username}', code=307)
+    return render_template('user.html', action=f"/users/{username}/add", extra=f"Added '{request.form['alias']}' to the list! :)")
 
 
 @app.route('/refresh')
@@ -276,7 +276,7 @@ def refresh():
             rep = git.Repo.init(repname)
             for date in dates:
                 for n in range(nc):
-                    rep.index.commit("made with love by gitfitti", author=author,
+                    rep.index.commit("made with love by gitfitti :heart:", author=author,
                                      committer=author, author_date=date.isoformat())
                     i += 1
             try:
