@@ -200,7 +200,7 @@ def register():
     cursor.execute(sql.SQL("CREATE TABLE {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
         sql.Identifier(request.form['name'])))
     auth = base64.b64encode(
-        request.form['auth'][:20]+'a'+request.form['auth'][20:])
+        (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
     cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
         request.form['password'].encode()).hexdigest(), request.form['email'], auth[:10]+'a'+auth[10:]))
     conn.commit()
