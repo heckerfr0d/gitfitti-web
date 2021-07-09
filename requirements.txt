@@ -2,3 +2,5 @@ flask==2.0.1
 gunicorn
 gitpython
 requests
+psycopg2
+hashlib
