@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from werkzeug.utils import redirect
 import git
 import datetime
 import os
@@ -6,13 +7,15 @@ import shutil
 import requests
 import base64
 import json
-# import psycopg2
+from psycopg2 import connect, sql
+import hashlib
 
 app = Flask(__name__)
 n = 0
 cont = []
-# DATABASE_URL = os.environ['DATABASE_URL']
-# conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = connect(DATABASE_URL, sslmode='require')
+# conn = connect(dbname="gitfitti")
 
 
 def getDates(year=None):
@@ -30,6 +33,15 @@ def getDates(year=None):
     for x in range(52 * 7):
         dates[x % 7].append(first_sunday + datetime.timedelta(x))
     return dates
+
+
+def getActiveDates(dates, a):
+    ad = []
+    for i in range(7):
+        for j in range(52):
+            for k in range(a[i][j]):
+                ad.append(dates[i][j])
+    return ad
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -51,18 +63,11 @@ def main():
     #     return "error"
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
 
-    def getActiveDates(dates):
-        ad = []
-        for i in range(7):
-            for j in range(52):
-                for k in range(a[i][j]):
-                    ad.append(dates[i][j])
-        return ad
     try:
         year = int(request.form['year'])
-        dates = getActiveDates(getDates(year))
+        dates = getActiveDates(getDates(year), a)
     except:
-        dates = getActiveDates(getDates())
+        dates = getActiveDates(getDates(), a)
     name = request.form['username']
     email = request.form['email']
     author = git.Actor(name, email)
@@ -133,7 +138,8 @@ def contribute():
         }
         requests.post(
             'https://api.github.com/repos/heckerfr0d/gitfitti-web/forks', headers=headers)
-        url = "https://api.github.com/repos/"+request.form['name']+"/gitfitti-web/contents/static/script.js"
+        url = "https://api.github.com/repos/" + \
+            request.form['name']+"/gitfitti-web/contents/static/script.js"
         base64content = base64.b64encode(open("static/script.js", "rb").read())
         data = requests.get(url+'?ref=main', headers=headers).json()
         sha = data['sha']
@@ -149,10 +155,8 @@ def contribute():
             "head": request.form['name'] + ":main",
             "base": "main"
         })
-        print(headers)
-        print(message)
         PR = requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
-              data=message, headers=headers).json()
+                           data=message, headers=headers).json()
         return render_template('contribute.html', action="/contribute", form=request.form, extra=' ', pr=PR['html_url'])
     else:
         if request.form['name']:
@@ -186,17 +190,87 @@ def admin():
     cont.clear()
     return render_template('admin.html', action="/admin", n=n, form=request.form)
 
-# @app.route('/schedule', methods=['GET', 'POST'])
-# def schedule():
-#     if request.method=='GET':
-#         return render_template('slogin.html')
-#     cursor = conn.cursor()
-#     cursor.execute("CREATE TABLE IF NOT EXISTS users (id serial primary key, name text not NULL, email text not NULL UNIQUE, auth text not NULL)")
-#     cursor.execute("CREATE TABLE %s (a INTEGER[][])", (request.form['name'],))
-#     cursor.execute("INSERT INTO users (name, email, auth) VALUES (%s, %s, %s)", (request.form['name'], request.form['email'], request.form['auth']))
-#     cursor.commit()
-#     cursor.close()
-#     return render_template()
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html', action="/register")
+    cursor = conn.cursor()
+    cursor.execute("CREATE TABLE IF NOT EXISTS users (id serial primary key, name text not NULL, password text not NULL, email text not NULL UNIQUE, auth text not NULL)")
+    cursor.execute(sql.SQL("CREATE TABLE {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
+        sql.Identifier(request.form['name'])))
+    auth = base64.b64encode(
+        request.form['auth'][:20]+'a'+request.form['auth'][20:])
+    cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
+        request.form['password'].encode()).hexdigest(), request.form['email'], auth[:10]+'a'+auth[10:]))
+    conn.commit()
+    cursor.close()
+    return redirect(f"/users/{request.form['name']}", code=307)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html', action="/login")
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, password FROM users WHERE name=%s",
+                   (request.form['name'],))
+    username, password = cursor.fetchone()
+    cursor.close()
+    if hashlib.sha3_512(request.form['password'].encode()).hexdigest() == password:
+        return redirect(f"/users/{username}", code=307)
+
+
+@app.route('/users/<username>', methods=['POST'])
+def userPage(username):
+    # cursor = conn.cursor()
+    # cursor.execute("SELECT alias, a from %s", (request.form['name'],))
+    # rows = cursor.fetchall()
+    # cursor.close()
+    # print(rows)
+    return render_template('user.html', action=f"/users/{username}/add")
+
+
+@app.route('/users/<username>/add', methods=['POST'])
+def add(username):
+    cursor = conn.cursor()
+    a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
+    cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
+        sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
+    conn.commit()
+    cursor.close()
+    return redirect(f'/users/{username}')
+
+
+@app.route('/refresh')
+def refresh():
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, email, auth FROM users")
+    users = cursor.fetchall()
+    i = 0
+    j = 0
+    for name, email, auth in users:
+        auth = base64.b64decode(auth[:10]+auth[11:]).decode("utf-8")
+        auth = auth[:20]+auth[21:]
+        cursor.execute(sql.SQL("SELECT DISTINCT ON (repo) repo, a, nc FROM {} ORDER BY (repo), random()").format(
+            sql.Identifier(name)))
+        for repo, a, nc in cursor.fetchall():
+            j += 1
+            repurl = f"https://{name}:{auth}@{repo[8:]}"
+            repname = repo.split('/')[-1]
+            author = git.Actor(name, email)
+            dates = getActiveDates(getDates(), a)
+            git.cmd.Git().clone(repurl)
+            rep = git.Repo.init(repname)
+            for date in dates:
+                for n in range(nc):
+                    rep.index.commit("made with love by gitfitti", author=author,
+                                     committer=author, author_date=date.isoformat())
+                    i += 1
+            rep.remotes.origin.push()
+            shutil.rmtree(repname)
+    return f"Created {i} commits in {j} repos for {len(users)} users :)"
+
 
 if __name__ == "__main__":
     app.run()

@@ -1,0 +1,23 @@
+{% extends "main.html" %}
+
+{% block main %}
+<!-- <p class=message id="contribute">
+    Anyone can contribute! Simply draw on the grid below and give it a name. Changes are effective immediately!
+    Credits will be given in the commit message. If you want to receive contributor status instead, <a href="https://github.com/settings/tokens">generate a Personal Access Token</a>
+    with Repo scope and a fork will be created and a PR opened in your account.
+</p> -->
+{% endblock %}
+
+{% block submit %}
+<div>
+    <input type="text" class="admin" name="alias" placeholder="Give it a name">
+    <input type="text" class="admin" name="repo" placeholder="Repo URL">
+    <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1">
+</div>
+<div>
+    <input type="submit" class="do" value="Add it to the List!">
+</div>
+{% endblock %}
+<!-- <form action={{list}} method="post">
+    <div><input type="submit" value="Edit the List"></div>
+</form> -->
