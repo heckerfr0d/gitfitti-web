@@ -3,4 +3,3 @@ gunicorn
 gitpython
 requests
 psycopg2
-hashlib
