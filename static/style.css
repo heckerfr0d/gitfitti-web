@@ -326,3 +326,30 @@ input[type=number] {
     border-radius: 50%;
   }
   
+footer{
+
+    color: var(--footer-color);
+    text-align: center;
+    padding: 40px;
+    width: 100%;
+}
+
+.fa{
+    top: 5px;
+    position: relative;
+    padding: 0 10px 0 10px;
+}
+
+.icon:hover{
+    transform: scale(1.1);
+    
+}
+
+.icon{
+    margin:0 30px;
+    width: 30px;
+}
+
+.schedule {
+    font-size: 14px;
+}
