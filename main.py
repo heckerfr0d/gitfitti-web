@@ -13,10 +13,10 @@ import hashlib
 app = Flask(__name__)
 n = 0
 cont = []
-# DATABASE_URL = os.environ['DATABASE_URL']
-# conn = connect(DATABASE_URL, sslmode='require')
+DATABASE_URL = os.environ['DATABASE_URL']
+conn = connect(DATABASE_URL, sslmode='require')
 TOKEN = os.getenv('TOKEN')
-conn = connect(dbname="gitfitti")
+# conn = connect(dbname="gitfitti")
 
 
 def getDates(year=None):
