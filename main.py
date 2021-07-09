@@ -15,6 +15,7 @@ n = 0
 cont = []
 DATABASE_URL = os.environ['DATABASE_URL']
 conn = connect(DATABASE_URL, sslmode='require')
+TOKEN = os.getenv('TOKEN')
 # conn = connect(dbname="gitfitti")
 
 
@@ -171,7 +172,7 @@ def admin():
     if request.method == 'GET':
         return render_template('admin.html', action="/admin", n=n)
     git.cmd.Git().clone(
-        f"https://{request.form['name']}:{request.form['password']}@github.com/heckerfr0d/gitfitti-web")
+        f"https://{request.form['name']}:{TOKEN}@github.com/heckerfr0d/gitfitti-web")
     repo = git.Repo.init('gitfitti-web')
     with open('static/script.js', 'rb') as fin:
         with open('gitfitti-web/static/script.js', 'wb') as fout:
@@ -186,9 +187,10 @@ def admin():
     origin = repo.remote(name='origin')
     origin.push()
     shutil.rmtree('gitfitti-web')
+    extra = f'Merged {n} contributions from {thanks}'
     n = 0
     cont.clear()
-    return render_template('admin.html', action="/admin", n=n, form=request.form)
+    return render_template('admin.html', action="/admin", n=n, extra=extra, form=request.form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -197,12 +199,15 @@ def register():
         return render_template('register.html', action="/register")
     cursor = conn.cursor()
     cursor.execute("CREATE TABLE IF NOT EXISTS users (id serial primary key, name text not NULL, password text not NULL, email text not NULL UNIQUE, auth text not NULL)")
-    cursor.execute(sql.SQL("CREATE TABLE {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
-        sql.Identifier(request.form['name'])))
     auth = base64.b64encode(
         (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
-    cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
-        request.form['password'].encode()).hexdigest(), request.form['email'], (auth[:10]+b'a'+auth[10:]).decode('utf-8')))
+    try:
+        cursor.execute(sql.SQL("CREATE TABLE IF NOT EXISTS {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
+            sql.Identifier(request.form['name'])))
+        cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
+            request.form['password'].encode()).hexdigest(), request.form['email'], (auth[:10]+b'a'+auth[10:]).decode('utf-8')))
+    except:
+        return render_template('register.html', extra='Username already registered!')
     conn.commit()
     cursor.close()
     return redirect(f"/users/{request.form['name']}", code=307)
@@ -219,6 +224,7 @@ def login():
     cursor.close()
     if hashlib.sha3_512(request.form['password'].encode()).hexdigest() == password:
         return redirect(f"/users/{username}", code=307)
+    return render_template('login.html', extra='Invalid username or password!')
 
 
 @app.route('/users/<username>', methods=['POST'])
@@ -239,7 +245,7 @@ def add(username):
         sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
     conn.commit()
     cursor.close()
-    return redirect(f'/users/{username}')
+    return redirect(f'/users/{username}', code=307)
 
 
 @app.route('/refresh')
@@ -252,12 +258,18 @@ def refresh():
     for name, email, auth in users:
         auth = base64.b64decode(auth[:10]+auth[11:]).decode("utf-8")
         auth = auth[:20]+auth[21:]
+        headers = {
+            'Authorization': 'token '+auth
+        }
         cursor.execute(sql.SQL("SELECT DISTINCT ON (repo) repo, a, nc FROM {} ORDER BY (repo), random()").format(
             sql.Identifier(name)))
         for repo, a, nc in cursor.fetchall():
             j += 1
             repurl = f"https://{name}:{auth}@{repo[8:]}"
             repname = repo.split('/')[-1]
+            requests.delete(f'https://api.github.com/repos/{name}/{repname}', headers=headers)
+            data = json.dumps({"name":repname, "description":"A repo for GitHub graffiti"})
+            requests.post('https://api.github.com/user/repos', headers=headers, data=data)
             author = git.Actor(name, email)
             dates = getActiveDates(getDates(), a)
             git.cmd.Git().clone(repurl)
@@ -267,9 +279,13 @@ def refresh():
                     rep.index.commit("made with love by gitfitti", author=author,
                                      committer=author, author_date=date.isoformat())
                     i += 1
+            try:
+                rep.remotes.origin.set_url(repurl)
+            except:
+                rep.create_remote('origin', repurl)
             rep.remotes.origin.push()
             shutil.rmtree(repname)
-    return f"Created {i} commits in {j} repos for {len(users)} users :)"
+    return render_template('main.html', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
 
 
 if __name__ == "__main__":
