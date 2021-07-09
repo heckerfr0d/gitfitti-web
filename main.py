@@ -202,7 +202,7 @@ def register():
     auth = base64.b64encode(
         (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
     cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
-        request.form['password'].encode()).hexdigest(), request.form['email'], auth[:10]+'a'+auth[10:]))
+        request.form['password'].encode()).hexdigest(), request.form['email'], auth[:10]+b'a'+auth[10:]))
     conn.commit()
     cursor.close()
     return redirect(f"/users/{request.form['name']}", code=307)
