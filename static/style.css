@@ -336,6 +336,7 @@ footer{
 
 .fa{
     position: relative;
+    height: 18px;
     padding: 0 10px 0 10px;
 }
 
