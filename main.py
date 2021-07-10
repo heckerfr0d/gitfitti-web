@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+from flask.helpers import make_response
 from werkzeug.utils import redirect
 import git
 import datetime
@@ -287,6 +288,15 @@ def refresh():
             shutil.rmtree(repname)
     return render_template('main.html', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
 
+@app.errorhandler(404)
+def error1(a):
+    return make_response(render_template('error.html', error='404'), 404)
+@app.errorhandler(400)
+def error2(a):
+    return make_response(render_template('error.html', error='400'), 400)
+@app.errorhandler(500)
+def error3(a):
+    return make_response(render_template('error.html', error='500'), 500)
 
 if __name__ == "__main__":
     app.run()
