@@ -8,6 +8,9 @@
     --color-alert-info-bg: rgba(56, 139, 253, 0.15);
     --color-alert-info-border: rgba(56, 139, 253, 0.4);
     --color-alert-info-text: #58a6ff;
+    --color-alert-warn-bg: rgba(187, 128, 9, 0.15);
+    --color-alert-warn-border: rgba(187, 128, 9, 0.4);
+    --color-alert-warn-text: #d29922;
     --input-bg-color: #0d1117;
     --input-border: rgba(240, 246, 252, 0.1);
     --input-bh: #8b949e;
@@ -35,6 +38,9 @@
     --color-alert-info-bg: #ddf4ff;
     --color-alert-info-border: rgba(84, 174, 255, 0.4);
     --color-alert-info-text: #0969da;
+    --color-alert-warn-bg: #fff8c5;
+    --color-alert-warn-border: rgba(212, 167, 44, 0.4);
+    --color-alert-warn-text: #9a6700;
     --input-bg-color: #fff;
     --input-border: #d0d7de;
     --input-bh: #b6bbc0;
@@ -126,6 +132,11 @@ div{
     color: var(--color-alert-info-text);
     padding: 20px 16px;
     position: relative;
+}
+.warn{
+    background-image: linear-gradient(var(--color-alert-warn-bg),var(--color-alert-warn-bg));
+    border: 1px solid var(--color-alert-warn-border);
+    color: var(--color-alert-warn-text);
 }
 
 #contribute {

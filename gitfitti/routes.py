@@ -1,7 +1,9 @@
 from flask import current_app as app
 from flask import render_template, request, make_response
 from psycopg2 import sql, connect
+from flask_login import login_manager, login_user, current_user, login_required
 import hashlib
+from .user import User
 from .utilities import *
 
 n = 0
@@ -25,10 +27,10 @@ def main():
     year = request.form.get('year', None)
     ret = commit(name, email, repurl, repname, a, int(request.form['nc']), year)
     if ret == -1:
-        return render_template('main.html', action="/", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+        return render_template('main.html', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
     if ret == -2:
-        return render_template('main.html', action="/", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
-    return render_template('main.html', action="/", extra=' ', n=ret, profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form)
+        return render_template('main.html', action="/", c="message warn", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+    return render_template('main.html', action="/", c='message', extra=' ', n=ret, profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form)
 
 
 @app.route('/contribute', methods=['GET', 'POST'])
@@ -43,12 +45,12 @@ def contribute():
 
     if request.form['auth']:
         pr_link = openPR(request.form['name'], request.form['alias'], request.form['auth'])
-        return render_template('contribute.html', action="/contribute", form=request.form, extra=' ', pr=pr_link)
+        return render_template('contribute.html', action="/contribute", form=request.form, c='message', extra=' ', pr=pr_link)
     else:
         if request.form['name']:
             cont.append(request.form['name'])
         n += 1
-    return render_template('contribute.html', action="/contribute", form=request.form, extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.')
+    return render_template('contribute.html', action="/contribute", form=request.form, c='message', extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.')
 
 
 @app.route('/admin', methods=['GET', 'POST'])
@@ -60,7 +62,7 @@ def admin():
     extra = f'Merged {n} contributions from {thanks}'
     n = 0
     cont.clear()
-    return render_template('admin.html', action="/admin", n=n, extra=extra, form=request.form)
+    return render_template('admin.html', action="/admin", n=n, c='message', extra=extra, form=request.form)
 
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -68,33 +70,82 @@ def register():
     if request.method == 'GET':
         return render_template('register.html', action="/register")
     cursor = conn.cursor()
-    cursor.execute("CREATE TABLE IF NOT EXISTS users (id serial primary key, name text not NULL, password text not NULL, email text not NULL UNIQUE, auth text not NULL)")
-    auth = base64.b64encode(
-        (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
     try:
+        name = request.form['name']
+        email = request.form['email']
+        password = hashlib.sha3_512(
+            request.form['password'].encode()).hexdigest()
+        auth = base64.b64encode(
+            (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
+        auth = (auth[:10]+b'a'+auth[10:]).decode('utf-8')
         cursor.execute(sql.SQL("CREATE TABLE IF NOT EXISTS {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
             sql.Identifier(request.form['name'])))
-        cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (request.form['name'], hashlib.sha3_512(
-            request.form['password'].encode()).hexdigest(), request.form['email'], (auth[:10]+b'a'+auth[10:]).decode('utf-8')))
+        cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)", (name, password, email, auth))
+        user = User(name, email, password, auth)
+        login_user(user, remember=True)
     except:
-        return render_template('register.html', extra='Username already registered!')
+        return render_template('register.html', c='message warn', extra='Invalid details or user already registered!')
     conn.commit()
     cursor.close()
-    return render_template("user.html", action=f"/users/{request.form['name']}/add")
+    return render_template("user.html", action=f"/users/{name}/add")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if current_user.is_authenticated():
+        return render_template("user.html", action=f"/users/{current_user.get_id()}/add")
     if request.method == 'GET':
         return render_template('login.html', action="/login")
     cursor = conn.cursor()
-    cursor.execute("SELECT name, password FROM users WHERE name=%s",
+    cursor.execute("SELECT name, password, email, auth FROM users WHERE name=%s",
                    (request.form['name'],))
-    username, password = cursor.fetchone()
+    username, password, email, auth = cursor.fetchone()
     cursor.close()
     if hashlib.sha3_512(request.form['password'].encode()).hexdigest() == password:
+        user = User(username, email, password, auth)
+        login_user(user, remember=True)
         return render_template("user.html", action=f"/users/{username}/add")
-    return render_template('login.html', extra='Invalid username or password!')
+    return render_template('login.html', c='message warn', extra='Invalid username or password!')
+
+
+@app.route('/users/<username>', methods=['POST'])
+@login_required
+def userPage(username):
+    # cursor = conn.cursor()
+    # cursor.execute("SELECT alias, a from %s", (request.form['name'],))
+    # rows = cursor.fetchall()
+    # cursor.close()
+    # print(rows)
+    return render_template('user.html', action=f"/users/{username}/add")
+
+
+@app.route('/users/<username>/add', methods=['POST'])
+@login_required
+def add(username):
+    cursor = conn.cursor()
+    a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
+    cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
+        sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
+    conn.commit()
+    cursor.close()
+    return render_template('user.html', action=f"/users/{username}/add", c='message', extra=f"Added '{request.form['alias']}' to the list! :)")
+
+
+@login_manager.user_loader
+def userloader(user_id):
+    cursor = conn.cursor()
+    cursor.execute("SELECT name, email, password, auth FROM users WHERE name=%s", (user_id,))
+    try:
+        name, email, password, auth = cursor.fetchone()
+        cursor.close()
+        return User(name, email, password, auth)
+    except:
+        return None
+
+
+@login_manager.unauthorized_handler
+def unauth():
+    return render_template('login.html', c='message warn', extra='Login required!')
 
 
 @app.route('/refresh')
@@ -122,28 +173,8 @@ def refresh():
             ret = commit(name, email, repurl, repname, a, nc)
             if ret > 0:
                 i += ret
-    return render_template('main.html', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
-
-
-@app.route('/users/<username>', methods=['POST'])
-def userPage(username):
-    # cursor = conn.cursor()
-    # cursor.execute("SELECT alias, a from %s", (request.form['name'],))
-    # rows = cursor.fetchall()
-    # cursor.close()
-    # print(rows)
-    return render_template('user.html', action=f"/users/{username}/add")
-
-
-@app.route('/users/<username>/add', methods=['POST'])
-def add(username):
-    cursor = conn.cursor()
-    a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
-    cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
-        sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
-    conn.commit()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", extra=f"Added '{request.form['alias']}' to the list! :)")
+    return render_template('main.html', c='message', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
 
 
 @app.errorhandler(404)

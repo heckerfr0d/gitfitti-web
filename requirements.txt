@@ -1,4 +1,5 @@
 flask==2.0.1
+flask_login
 gunicorn
 gitpython
 requests
