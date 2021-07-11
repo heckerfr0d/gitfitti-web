@@ -1,12 +1,13 @@
 from flask import Flask
-from psycopg2 import connect
+from flask_login import LoginManager
+import os
 
-# DATABASE_URL = os.environ['DATABASE_URL']
-# g.conn = connect(DATABASE_URL, sslmode='require')
-
+login_manager = LoginManager()
 
 def init_app():
     app = Flask(__name__)
+    app.config['SECRET_KEY'] = os.environ['SECRET_KEY']
+    login_manager.init_app(app)
 
     with app.app_context():
 

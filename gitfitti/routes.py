@@ -1,8 +1,11 @@
 from flask import current_app as app
 from flask import render_template, request, make_response
+from flask.helpers import url_for
 from psycopg2 import sql, connect
 from flask_login import login_manager, login_user, current_user, login_required
 import hashlib
+
+from werkzeug.utils import redirect
 from .user import User
 from .utilities import *
 
@@ -87,13 +90,13 @@ def register():
         return render_template('register.html', c='message warn', extra='Invalid details or user already registered!')
     conn.commit()
     cursor.close()
-    return render_template("user.html", action=f"/users/{name}/add")
+    return redirect(url_for('userPage', username=name))
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-    if current_user.is_authenticated():
-        return render_template("user.html", action=f"/users/{current_user.get_id()}/add")
+    if current_user.is_authenticated:
+        return redirect(url_for('userPage', username=current_user.get_id()))
     if request.method == 'GET':
         return render_template('login.html', action="/login")
     cursor = conn.cursor()
@@ -104,11 +107,11 @@ def login():
     if hashlib.sha3_512(request.form['password'].encode()).hexdigest() == password:
         user = User(username, email, password, auth)
         login_user(user, remember=True)
-        return render_template("user.html", action=f"/users/{username}/add")
+        return redirect(url_for('userPage', username=username))
     return render_template('login.html', c='message warn', extra='Invalid username or password!')
 
 
-@app.route('/users/<username>', methods=['POST'])
+@app.route('/users/<username>', methods=['GET', 'POST'])
 @login_required
 def userPage(username):
     # cursor = conn.cursor()
@@ -128,11 +131,11 @@ def add(username):
         sql.Identifier(username)), (request.form['repo'], request.form['alias'], a, request.form['nc']))
     conn.commit()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", c='message', extra=f"Added '{request.form['alias']}' to the list! :)")
+    return redirect(url_for('userPage', username=username))
 
 
-@login_manager.user_loader
-def userloader(user_id):
+@app.login_manager.user_loader
+def user_loader(user_id):
     cursor = conn.cursor()
     cursor.execute("SELECT name, email, password, auth FROM users WHERE name=%s", (user_id,))
     try:
@@ -143,7 +146,7 @@ def userloader(user_id):
         return None
 
 
-@login_manager.unauthorized_handler
+@app.login_manager.unauthorized_handler
 def unauth():
     return render_template('login.html', c='message warn', extra='Login required!')
 
