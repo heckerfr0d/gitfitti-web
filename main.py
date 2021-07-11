@@ -1,6 +1,5 @@
 from flask import Flask, render_template, request
 from flask.helpers import make_response
-from werkzeug.utils import redirect
 import git
 import datetime
 import os
@@ -50,19 +49,7 @@ def getActiveDates(dates, a):
 def main():
     if request.method == 'GET':
         return render_template('main.html', action="/")
-    # a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
-    # text_to_render = request.form['text']
-    # font = Font('Fonts/subway-ticker.ttf', 8)
-    # try:
-    #     text = repr(font.render_text(text_to_render, 52, 7))
-    #     text_by_weekday = text.split('\n')
-    #     for i in range(7):
-    #         for j in range(52):
-    #             if text_by_weekday[i][j] == '#':
-    #                 a[i][j] = (a[i][j] + 1)%3
-    #     return render_template('main.html', a=a)
-    # except:
-    #     return "error"
+
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
 
     try:
