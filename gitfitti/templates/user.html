@@ -12,4 +12,64 @@
 <div>
     <input type="submit" class="do" value="Add it to the List!">
 </div>
+<div>
+    <input type="button" class="do" onclick="showList()"  value="Edit the List">
+</div>
+{% endblock %}
+
+{% block user %}
+<div id="list" class="scroll-vertical root" style="display: none;">
+{% for alias, repo, a, nc in rows %}
+{% set act = "/users/"+username+"/"+alias %}
+<div>
+<form action={{act}} method="POST">
+    <div>
+        <div class="scroll-horizontal">
+            <table>
+                <tbody>
+                    {% for i in range(7) %}
+                    <tr>
+                        {% for j in range(52) %}
+                        <td>
+                            {% set s = "btn btn-secondary c"~a[i][j] %}
+                            <button type="button" name="{{i}} {{j}}" class="{{s}}"></button>
+                            {% for k in range(3) %}
+                            {% if k==a[i][j] %}
+                            <input type="radio" name="{{i}} {{j}}" value="{{k}}" checked hidden>
+                            {% else %}
+                            <input type="radio" name="{{i}} {{j}}" value="{{k}}" hidden>
+                            {% endif %}
+                            {% endfor %}
+                        </td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <input type="text" class="ttt" name="ttg" placeholder="Translate Text to Graffiti">
+        <input type="button" class="tr" name="translate" value="Translate">
+        <input type="button" class="tr" name="invert" value="Invert">
+        <input type="button" class="tr" name="clear" value="Clear">
+    </div>
+    <div>
+        <input type="text" class="admin" name="alias" placeholder="Give it a name" value={{alias}}>
+        <input type="text" class="admin" name="repo" placeholder="Repo URL" value={{repo}}>
+        <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
+    </div>
+        <input type="submit" class="do" value="Modify">
+        {% set act = "/users/"+username+"/delete/"+alias %}
+        <input type="button" class="do" value="Delete" onclick="window.location.href='{{act}}'">
+</form>
+</div>
+<hr>
+{% endfor %}
+</div>
+
+<script>
+    function showList() {
+        $('#main').hide();
+        $('#list').show();
+    }
+</script>
 {% endblock %}

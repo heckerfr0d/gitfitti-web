@@ -1,3 +1,4 @@
+from flask.helpers import url_for
 import git
 import datetime
 import os
@@ -89,9 +90,10 @@ def editJS(alias, a):
             else:
                 txt[i] += ' '
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
-    with open('static/script.js', 'a') as f:
+    with open(url_for('static', 'script.js'), 'a') as f:
         f.write(f"\ntxt['{alias}'] = {txt}\n")
-        f.write(f"pub.push('{alias}');\n\n")
+        if len(alias)>1:
+            f.write(f"pub.push('{alias}');\n\n")
 
 
 def openPR(name, alias, auth):
@@ -103,7 +105,7 @@ def openPR(name, alias, auth):
         'https://api.github.com/repos/heckerfr0d/gitfitti-web/forks', headers=headers)
     url = "https://api.github.com/repos/" + \
         name+"/gitfitti-web/contents/static/script.js"
-    base64content = base64.b64encode(open("static/script.js", "rb").read())
+    base64content = base64.b64encode(open(url_for('static', 'script.js'), "rb").read())
     data = requests.get(url+'?ref=main', headers=headers).json()
     sha = data['sha']
     message = json.dumps({"message": "Adding '" + alias + "' to js dict",
@@ -127,7 +129,7 @@ def merge(n, cont):
     git.cmd.Git().clone(
         f"https://heckerfr0d:{TOKEN}@github.com/heckerfr0d/gitfitti-web")
     repo = git.Repo.init('gitfitti-web')
-    with open('static/script.js', 'rb') as fin:
+    with open(url_for('static', 'script.js'), 'rb') as fin:
         with open('gitfitti-web/static/script.js', 'wb') as fout:
             shutil.copyfileobj(fin, fout)
     repo.git.add(update=True)

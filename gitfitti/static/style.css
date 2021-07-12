@@ -364,3 +364,8 @@ footer{
 .schedule {
     font-size: 14px;
 }
+
+.error {
+    font-size: 150px;
+    padding: 120px;
+}

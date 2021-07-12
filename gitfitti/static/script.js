@@ -401,7 +401,7 @@ txt[' '].push(" ");
 txt[' '].push(" ");
 
 function toggle(elem) {
-    var $radios = $('input[type="radio"][name="' + $(elem).attr('name') + '"]');
+    var $radios = elem.parent().find('input[type="radio"]');
     var colorClasses = ["btn-secondary c0", "btn-secondary c1", "btn-secondary c2"];
     var $checked = $radios.filter(':checked');
     var $next = $radios.eq($radios.index($checked[0]) + 1);
@@ -424,7 +424,7 @@ function findw(text) {
     return w - 1;
 }
 
-function render(text) {
+function render(trans, text) {
     var w = findw(text);
     if (w > 52)
         alert("You typed too long");
@@ -435,7 +435,7 @@ function render(text) {
                 for (var k = 0; k < 7; k++)
                     for (var j = offset; j < offset + (txt[text[c]][j - offset].length); j++)
                         if (txt[text[c]][k][j - offset] != ' ')
-                            toggle($('button[name="' + String(k) + ' ' + String(j) + '"]'));
+                            toggle(trans.parent().find('button[name="' + String(k) + ' ' + String(j) + '"]'));
                 offset += txt[text[c]][j - offset].length;
                 if (c != ' ')
                     offset++;
@@ -445,18 +445,18 @@ function render(text) {
 }
 
 $('input[name="translate"]').click(function () {
-    var text = $('input[name="ttg"]').val();
+    var text = $(this).parent().find('input[name="ttg"]').val();
     for (var i in pub) {
         if (text.includes(pub[i])) {
             txt['~'] = txt[pub[i]];
             text = text.replaceAll(pub[i], '~');
         }
     }
-    render(text);
+    render($(this), text);
 });
 
 $('input[name="clear"]').click(function () {
-    var $buttons = $('button');
+    var $buttons = $(this).parent().find('button[type="button"]');
     for (i in $buttons) {
         var $radio = $('input[type="radio"][name="' + $buttons[i].name + '"][value="0"]');
         $radio.prop("checked", true);
@@ -465,14 +465,17 @@ $('input[name="clear"]').click(function () {
 });
 
 $('input[name="invert"]').click(function () {
-    var buttons = $('button');
-    for (i in buttons)
-        toggle(buttons[i]);
+    var buttons = $(this).parent().find('button[type="button"]');
+    for (var i in buttons)
+    {
+        if($(buttons[i]).attr('name'))
+            toggle($(buttons[i]));
+    }
 });
 
-function dismiss() {
-    $('div[name="result"]').hide();
-}
+$('#dismiss').click( function () {
+    $(this).parent().hide();
+});
 
 let action = null;
 
@@ -553,7 +556,6 @@ txt['a'] = [
 	' ## #',
 	'     '
 ];
-pub.push('a');
 
 txt['b'] = [
 	'   ',
@@ -564,4 +566,3 @@ txt['b'] = [
 	'## ',
 	'   '
 ];
-pub.push('b');

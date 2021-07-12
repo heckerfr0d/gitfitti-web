@@ -42,11 +42,11 @@
         {% if pr %}
         Pull Request opened/updated! <a href={{pr}}>Check it out!</a>
         {% endif %}
-        <button class="close" type="button" aria-label="Dismiss this message" onclick="dismiss()">&#10005;</button>
+        <button class="close" type="button" aria-label="Dismiss this message" id="dismiss">&#10005;</button>
     </div>
     {% endif %}
     <br>
-    <div class="root">
+    <div class="root" id = "main">
         <form action={{action}} method="post">
             {% block main %}
             <div>
@@ -100,6 +100,8 @@
             {% endblock %}
         </form>
     </div>
+    {% block user %}
+    {% endblock %}
 </body>
 {% block footer %}
 <footer>

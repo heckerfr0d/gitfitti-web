@@ -2,9 +2,9 @@
 {% block main %}
 <div class="message warn" name="result">
     Hmmmm... Not sure what you meant to see but <a href="https://youtu.be/_olVbRl-fJU">here's</a> a nice easter egg ;)
-    <button class="close" type="button" aria-label="Dismiss this message" onclick="dismiss()">&#10005;</button>
+    <button class="close" type="button" aria-label="Dismiss this message" id="dismiss">&#10005;</button>
 </div>
-<div class="404">{{error}}!</div>
+<div class="error">{{error}}!</div>
 {% endblock %}
 
 {% block graph %}
