@@ -420,6 +420,8 @@ function findw(text) {
     for (var c in text) {
         if (text[c] in txt)
             w += txt[text[c]][0].length + 1;
+        else if (text[c].toUpperCase() in txt)
+            w += txt[text[c].toUpperCase()][0].length + 1;
     }
     return w - 1;
 }
@@ -431,6 +433,8 @@ function render(trans, text) {
     else {
         var offset = (((52 - w) / 2) >> 0);
         for (var c in text) {
+            if (!(text[c] in txt) && text[c].toUpperCase() in txt)
+                text = text.replaceAll(text[c], text[c].toUpperCase());
             if (text[c] in txt) {
                 for (var k = 0; k < 7; k++)
                     for (var j = offset; j < offset + (txt[text[c]][j - offset].length); j++)
