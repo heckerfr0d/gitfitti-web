@@ -12,9 +12,9 @@ from .utilities import *
 
 n = 0
 cont = []
-# DATABASE_URL = os.getenv('DATABASE_URL')
-# conn = connect(DATABASE_URL, sslmode='require')
-conn = connect(dbname="gitfitti")
+DATABASE_URL = os.getenv('DATABASE_URL')
+conn = connect(DATABASE_URL, sslmode='require')
+# conn = connect(dbname="gitfitti")
 
 
 @app.route('/', methods=['GET', 'POST'])
