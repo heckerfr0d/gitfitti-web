@@ -1,8 +1,9 @@
 from flask import current_app as app
 from flask import render_template, request, make_response
 from flask.helpers import url_for
+from flask_login.utils import logout_user
 from psycopg2 import sql, connect
-from flask_login import login_manager, login_user, current_user, login_required
+from flask_login import login_user, current_user, login_required
 import hashlib
 
 from werkzeug.utils import redirect
@@ -11,9 +12,9 @@ from .utilities import *
 
 n = 0
 cont = []
-DATABASE_URL = os.getenv('DATABASE_URL')
-conn = connect(DATABASE_URL, sslmode='require')
-# conn = connect(dbname="gitfitti")
+# DATABASE_URL = os.getenv('DATABASE_URL')
+# conn = connect(DATABASE_URL, sslmode='require')
+conn = connect(dbname="gitfitti")
 
 
 @app.route('/', methods=['GET', 'POST'])
@@ -89,6 +90,8 @@ def register():
         cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)",
                        (name, password, email, auth))
         user = User(name, email, password, auth)
+        if current_user.is_authenticated:
+            logout_user(current_user)
         login_user(user, remember=True)
     except:
         return render_template('register.html', c='message warn', extra='Invalid details or user already registered!')

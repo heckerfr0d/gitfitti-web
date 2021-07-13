@@ -5,12 +5,16 @@
     --root-border: #30363d;
     --navbar-color: #409eff;
     --navbar-bg-color: #161b22;
+    --icon-color: #484f58;
+    --icon-hover: #8b949e;
     --color-alert-info-bg: rgba(56, 139, 253, 0.15);
     --color-alert-info-border: rgba(56, 139, 253, 0.4);
     --color-alert-info-text: #58a6ff;
     --color-alert-warn-bg: rgba(187, 128, 9, 0.15);
     --color-alert-warn-border: rgba(187, 128, 9, 0.4);
     --color-alert-warn-text: #d29922;
+    --color-state-hover-primary-text: #f0f6fc;
+    --color-dropdown-shadow: 0px 8px 24px #010409;
     --input-bg-color: #0d1117;
     --input-border: rgba(240, 246, 252, 0.1);
     --input-bh: #8b949e;
@@ -35,12 +39,16 @@
     --root-border: #d0d7de;
     --navbar-color: #0969da;
     --navbar-bg-color: #f6f8fa;
+    --icon-color: #6e7781;
+    --icon-hover: #57606a;
+    --color-dropdown-shadow: 0px 8px 24px 0px rgba(140, 149, 159, 0.2);
     --color-alert-info-bg: #ddf4ff;
     --color-alert-info-border: rgba(84, 174, 255, 0.4);
     --color-alert-info-text: #0969da;
     --color-alert-warn-bg: #fff8c5;
     --color-alert-warn-border: rgba(212, 167, 44, 0.4);
     --color-alert-warn-text: #9a6700;
+    --color-state-hover-primary-text: #f0f6fc;
     --input-bg-color: #fff;
     --input-border: #d0d7de;
     --input-bh: #b6bbc0;
@@ -120,6 +128,10 @@ body{
     font-size: 1.5rem;
     font-weight: bold;
     padding: 20px;
+}
+
+.nav-link {
+    color: var(--navbar-color);
 }
 
 div{
@@ -341,24 +353,9 @@ footer{
 
     color: var(--footer-color);
     text-align: center;
-    padding: 40px;
+    padding: 60px;
     width: 100%;
-}
-
-.fa{
-    position: relative;
-    height: 18px;
-    padding: 0 10px 0 10px;
-}
-
-.icon:hover{
-    transform: scale(1.1);
-    
-}
-
-.icon{
-    margin:0 30px;
-    width: 30px;
+    font-size: 12px;
 }
 
 .schedule {
@@ -370,4 +367,43 @@ footer{
 .error {
     font-size: 150px;
     padding: 120px;
+}
+
+.octicon {
+    fill: var(--icon-color);
+    display: inline-block;
+    overflow: visible!important;
+    vertical-align: text-bottom;
+    margin: 0 24px 0 24px;
+}
+
+.octicon:hover{
+    fill: var(--icon-hover);
+}
+
+svg {
+    height: 24;
+    width: 24;
+}
+
+.dropdown-menu {
+    background-clip: padding-box;
+    background-color: var(--navbar-bg-color);
+    border: 1px solid var(--root-border);
+    border-radius: 6px;
+    box-shadow: var(--color-dropdown-shadow);
+    width: 160px;
+    font-size: 14px;
+}
+
+.dropdown-item {
+    color: var(--body-color);
+    padding: 4px 8px 4px 16px;
+}
+
+.dropdown-item:focus, .dropdown-item:hover {
+    background-color: var(--input-bf);
+    color: var(--color-state-hover-primary-text);
+    outline: none;
+    text-decoration: none;
 }
