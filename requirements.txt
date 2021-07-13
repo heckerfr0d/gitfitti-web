@@ -1,6 +1,8 @@
-flask==2.0.1
+flask
 flask_login
-gunicorn
 gitpython
 requests
 psycopg2
+simple-crypt
+pycrypto
+gunicorn

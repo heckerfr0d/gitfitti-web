@@ -1,9 +1,9 @@
 from flask import current_app as app
 from flask import render_template, request, make_response
 from flask.helpers import url_for
-from flask_login.utils import logout_user
 from psycopg2 import sql, connect
-from flask_login import login_user, current_user, login_required
+from flask_login import login_user, logout_user, current_user, login_required
+from simplecrypt import encrypt, decrypt
 import hashlib
 
 from werkzeug.utils import redirect
@@ -82,9 +82,7 @@ def register():
         email = request.form['email']
         password = hashlib.sha3_512(
             request.form['password'].encode()).hexdigest()
-        auth = base64.b64encode(
-            (request.form['auth'][:20]+'a'+request.form['auth'][20:]).encode('utf-8'))
-        auth = (auth[:10]+b'a'+auth[10:]).decode('utf-8')
+        auth = encrypt(app.config['SECRET_KEY'], request.form['auth'])
         cursor.execute(sql.SQL("CREATE TABLE IF NOT EXISTS {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
             sql.Identifier(request.form['name'])))
         cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)",
@@ -121,6 +119,9 @@ def login():
 @app.route('/users/<username>/', methods=['GET', 'POST'])
 @login_required
 def userPage(username):
+    if current_user.get_id() != username:
+        logout_user(current_user)
+        return unauth()
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT alias, repo, a, nc FROM {}").format(
         sql.Identifier(username)))
@@ -132,6 +133,9 @@ def userPage(username):
 @app.route('/users/<username>/add/', methods=['POST'])
 @login_required
 def add(username):
+    if current_user.get_id() != username:
+        logout_user(current_user)
+        return unauth()
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
@@ -147,6 +151,9 @@ def add(username):
 @app.route('/users/<username>/<alias>/', methods=['POST'])
 @login_required
 def modify(username, alias):
+    if current_user.get_id() != username:
+        logout_user(current_user)
+        return unauth()
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
@@ -165,6 +172,9 @@ def modify(username, alias):
 @app.route('/users/<username>/delete/<alias>/', methods=['GET', 'POST'])
 @login_required
 def delete(username, alias):
+    if current_user.get_id() != username:
+        logout_user(current_user)
+        return unauth()
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
         sql.Identifier(username)), (alias,))
@@ -205,8 +215,7 @@ def refresh():
     i = 0
     j = 0
     for name, email, auth in users:
-        auth = base64.b64decode(auth[:10]+auth[11:]).decode("utf-8")
-        auth = auth[:20]+auth[21:]
+        auth = decrypt(app.config['SECRET_KEY'], auth).decode('utf-8')
         headers = {
             'Authorization': 'token '+auth
         }
