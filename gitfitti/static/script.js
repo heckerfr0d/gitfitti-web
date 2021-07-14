@@ -477,6 +477,14 @@ $('input[name="invert"]').click(function () {
     }
 });
 
+$('input[name="ttg"]').on('keypress', function(event) {
+    var keyCode = event.keyCode || event.which;
+    if (keyCode === 13) {
+      event.preventDefault();
+      $(this).next().click();
+    }
+  });
+
 $('#dismiss').click( function () {
     $(this).parent().hide();
 });
