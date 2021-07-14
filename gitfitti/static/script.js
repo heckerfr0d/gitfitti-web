@@ -437,10 +437,10 @@ function render(trans, text) {
                 text = text.replaceAll(text[c], text[c].toUpperCase());
             if (text[c] in txt) {
                 for (var k = 0; k < 7; k++)
-                    for (var j = offset; j < offset + (txt[text[c]][j - offset].length); j++)
+                    for (var j = offset; j < offset + (txt[text[c]][0].length); j++)
                         if (txt[text[c]][k][j - offset] != ' ')
                             toggle(trans.parent().find('button[name="' + String(k) + ' ' + String(j) + '"]'));
-                offset += txt[text[c]][j - offset].length;
+                offset += txt[text[c]][0].length;
                 if (c != ' ')
                     offset++;
             }
