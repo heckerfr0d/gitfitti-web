@@ -6,19 +6,21 @@
 {% block submit %}
 <div>
     <input type="text" class="admin" name="alias" placeholder="Give it a name">
-    <input type="text" class="admin" name="repo" placeholder="Repo URL">
-    <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1">
+    <input type="text" class="rep" name="repo" placeholder="Repo name">
+    <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1">
 </div>
 <div>
     <input type="submit" class="do" value="Add it to the List!">
 </div>
 <div>
-    <input type="button" class="do" onclick="showList()"  value="Edit the List">
+    <input type="button" class="do" onclick="showList()"  value="Edit the List" style="margin-top: 1px;">
 </div>
 {% endblock %}
 
 {% block user %}
 <div id="list" class="scroll-vertical root" style="display: none;">
+<input type="button" class="back" value="<" onclick="hideList()">
+{% if rows %}
 {% for alias, repo, a, nc in rows %}
 {% set act = "/users/"+username+"/"+alias %}
 <div>
@@ -54,22 +56,30 @@
     </div>
     <div>
         <input type="text" class="admin" name="alias" placeholder="Give it a name" value={{alias}}>
-        <input type="text" class="admin" name="repo" placeholder="Repo URL" value={{repo}}>
-        <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
+        <input type="text" class="rep" name="repo" placeholder="Repo name" value={{repo}}>
+        <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
-        <input type="submit" class="do" value="Modify">
+        <input type="submit" class="user" value="Modify">
         {% set act = "/users/"+username+"/delete/"+alias %}
-        <input type="button" class="do" value="Delete" onclick="window.location.href='{{act}}'">
+        <input type="button" class="user" value="Delete" onclick="window.location.href='{{act}}'">
 </form>
 </div>
 <hr>
 {% endfor %}
+{% set act = "/users/delete/"+username %}
+<input type="button" class="do red" value="Delete Account" onclick="window.location.href='{{act}}'">
+{% endif %}
 </div>
 
 <script>
     function showList() {
         $('#main').hide();
         $('#list').show();
+    }
+
+    function hideList() {
+        $('#list').hide();
+        $('#main').show();
     }
 </script>
 {% endblock %}

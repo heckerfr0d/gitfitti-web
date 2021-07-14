@@ -20,30 +20,29 @@ conn = connect(DATABASE_URL, sslmode='require')
 @app.route('/', methods=['GET', 'POST'])
 def main():
     if request.method == 'GET':
-        return render_template('main.html', action="/")
+        return render_template('main.html', page='Home', action="/")
 
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
 
     name = request.form['username']
     email = request.form['email']
-    repurl = "https://" + name + ":" + \
-        request.form['password'] + "@" + request.form['repo'][8:]
-    repname = repurl.split('/')[-1].split('.')[0]
+    repname = request.form['repo']
+    repurl = f"https://{name}:{request.form['password']}@github.com/{name}/{repname}"
     year = request.form.get('year', None)
     ret = commit(name, email, repurl, repname, a,
                  int(request.form['nc']), year)
     if ret == -1:
-        return render_template('main.html', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+        return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
     if ret == -2:
-        return render_template('main.html', action="/", c="message warn", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
-    return render_template('main.html', action="/", c='message', extra=' ', n=ret, profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form)
+        return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form)
+    return render_template('main.html', page='Home', action="/", c='message', extra=' ', n=ret, profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form)
 
 
 @app.route('/contribute/', methods=['GET', 'POST'])
 def contribute():
     global n, cont
     if request.method == 'GET':
-        return render_template('contribute.html', action="/contribute")
+        return render_template('contribute.html', page='Contribute', action="/contribute")
 
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
 
@@ -52,39 +51,39 @@ def contribute():
     if request.form['auth']:
         pr_link = openPR(
             request.form['name'], request.form['alias'], request.form['auth'])
-        return render_template('contribute.html', action="/contribute", form=request.form, c='message', extra=' ', pr=pr_link)
+        return render_template('contribute.html', page='Contribute', action="/contribute", form=request.form, c='message', extra=' ', pr=pr_link)
     else:
         if request.form['name']:
             cont.append(request.form['name'])
         n += 1
-    return render_template('contribute.html', action="/contribute", form=request.form, c='message', extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.')
+    return render_template('contribute.html', page='Contribute', action="/contribute", form=request.form, c='message', extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.')
 
 
 @app.route('/admin/', methods=['GET', 'POST'])
 def admin():
     global n
     if request.method == 'GET':
-        return render_template('admin.html', action="/admin", n=n)
+        return render_template('admin.html', page='Admin', action="/admin", n=n)
     thanks = merge(n, cont)
     extra = f'Merged {n} contributions from {thanks}'
     n = 0
     cont.clear()
-    return render_template('admin.html', action="/admin", n=n, c='message', extra=extra, form=request.form)
+    return render_template('admin.html', page='Admin', action="/admin", n=n, c='message', extra=extra, form=request.form)
 
 
 @app.route('/register/', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
-        return render_template('register.html', action="/register")
+        return render_template('register.html', page='Register', action="/register")
     cursor = conn.cursor()
     try:
         name = request.form['name']
         email = request.form['email']
+        cursor.execute(sql.SQL("CREATE TABLE {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
+            sql.Identifier(name)))
         password = hashlib.sha3_512(
             request.form['password'].encode()).hexdigest()
         auth = encrypt(app.config['SECRET_KEY'], request.form['auth'])
-        cursor.execute(sql.SQL("CREATE TABLE IF NOT EXISTS {} (id serial primary key, repo text, alias text, a INTEGER[][], nc integer)").format(
-            sql.Identifier(request.form['name'])))
         cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)",
                        (name, password, email, auth))
         user = User(name, email, password, auth)
@@ -92,18 +91,21 @@ def register():
             logout_user(current_user)
         login_user(user, remember=True)
     except:
-        return render_template('register.html', c='message warn', extra='Invalid details or user already registered!')
+        return render_template('register.html', page='Register', action="/register", c='message warn', extra='Invalid details or user already registered!')
     conn.commit()
     cursor.close()
     return redirect(url_for('userPage', username=name))
 
 
 @app.route('/login/', methods=['GET', 'POST'])
-def login():
+@app.route('/login/<ret>/', methods=['GET', 'POST'])
+def login(ret=None):
     if current_user.is_authenticated:
         return redirect(url_for('userPage', username=current_user.get_id()))
+    if ret:
+        return render_template('login.html', page='Login', action='/login', c='message warn', extra='You have to be logged in to access that page!')
     if request.method == 'GET':
-        return render_template('login.html', action="/login")
+        return render_template('login.html', page='Login', action="/login")
     cursor = conn.cursor()
     cursor.execute("SELECT name, password, email, auth FROM users WHERE name=%s",
                    (request.form['name'],))
@@ -113,7 +115,7 @@ def login():
         user = User(username, email, password, auth)
         login_user(user, remember=True)
         return redirect(url_for('userPage', username=username))
-    return render_template('login.html', c='message warn', extra='Invalid username or password!')
+    return render_template('login.html', page='Login', action='/login', c='message warn', extra='Invalid username or password!')
 
 
 @app.route('/users/<username>/', methods=['GET', 'POST'])
@@ -121,13 +123,13 @@ def login():
 def userPage(username):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return unauth()
+        return redirect(url_for('login', ret=True))
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT alias, repo, a, nc FROM {}").format(
         sql.Identifier(username)))
     rows = cursor.fetchall()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", username=username, rows=rows,  c="message", extra=f"Hi {username}, Welcome to your page!")
+    return render_template('user.html', page=username, action=f"/users/{username}/add", username=username, rows=rows,  c="message", extra=f"Hi {username}, Welcome to your page!")
 
 
 @app.route('/users/<username>/add/', methods=['POST'])
@@ -135,7 +137,7 @@ def userPage(username):
 def add(username):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return unauth()
+        return redirect(url_for('login', ret=True))
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
@@ -145,7 +147,7 @@ def add(username):
         sql.Identifier(username)))
     rows = cursor.fetchall()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", c="message", extra=f"Added '{request.form['alias']}' to the list!", username=username, rows=rows)
+    return render_template('user.html', page=username, action=f"/users/{username}/add", c="message", extra=f"Added '{request.form['alias']}' to the list!", username=username, rows=rows)
 
 
 @app.route('/users/<username>/<alias>/', methods=['POST'])
@@ -153,7 +155,7 @@ def add(username):
 def modify(username, alias):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return unauth()
+        return redirect(url_for('login', ret=True))
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
@@ -166,7 +168,7 @@ def modify(username, alias):
         sql.Identifier(username)))
     rows = cursor.fetchall()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", c="message", extra="List Updated!", username=username, rows=rows)
+    return render_template('user.html', page=username, action=f"/users/{username}/add", c="message", extra="List Updated!", username=username, rows=rows)
 
 
 @app.route('/users/<username>/delete/<alias>/', methods=['GET', 'POST'])
@@ -174,7 +176,7 @@ def modify(username, alias):
 def delete(username, alias):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return unauth()
+        return redirect(url_for('login', ret=True))
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
         sql.Identifier(username)), (alias,))
@@ -186,8 +188,23 @@ def delete(username, alias):
         sql.Identifier(username)))
     rows = cursor.fetchall()
     cursor.close()
-    return render_template('user.html', action=f"/users/{username}/add", c="message", extra=f"Removed '{alias}' from the list!", username=username, rows=rows)
+    return render_template('user.html', page=username, action=f"/users/{username}/add", c="message", extra=f"Removed '{alias}' from the list!", username=username, rows=rows)
 
+
+@app.route('/users/delete/<username>/', methods=['GET', 'POST'])
+@login_required
+def deleteUser(username):
+    if current_user.get_id() != username:
+        logout_user(current_user)
+        return redirect(url_for('login', ret=True))
+    cursor = conn.cursor()
+    cursor.execute(sql.SQL("DROP TABLE {}").format(
+        sql.Identifier(username)))
+    cursor.execute("DELETE FROM users WHERE name=%s", (username,))
+    conn.commit()
+    cursor.close()
+    logout_user(current_user)
+    return redirect(url_for('login', ret=True))
 
 @app.login_manager.user_loader
 def user_loader(user_id):
@@ -204,7 +221,7 @@ def user_loader(user_id):
 
 @app.login_manager.unauthorized_handler
 def unauth():
-    return render_template('login.html', c='message warn', extra='Login required!')
+    return redirect(url_for('login', ret=True))
 
 
 @app.route('/refresh/')
@@ -223,19 +240,18 @@ def refresh():
             sql.Identifier(name)))
         for repo, a, nc in cursor.fetchall():
             j += 1
-            repurl = f"https://{name}:{auth}@{repo[8:]}"
-            repname = repo.split('/')[-1]
+            repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
             requests.delete(
-                f'https://api.github.com/repos/{name}/{repname}', headers=headers)
+                f'https://api.github.com/repos/{name}/{repo}', headers=headers)
             data = json.dumps(
-                {"name": repname, "description": "A repo for GitHub graffiti"})
+                {"name": repo, "description": "A repo for GitHub graffiti"})
             requests.post('https://api.github.com/user/repos',
                           headers=headers, data=data)
-            ret = commit(name, email, repurl, repname, a, nc)
+            ret = commit(name, email, repurl, repo, a, nc)
             if ret > 0:
                 i += ret
     cursor.close()
-    return render_template('main.html', c='message', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
+    return render_template('main.html', page='Home', action="/", c='message', extra=f"Created {i} commits across {j} repos for {len(users)} users :)")
 
 
 @app.errorhandler(404)

@@ -4,5 +4,5 @@ gitpython
 requests
 psycopg2
 simple-crypt
-pycrypto
+pycryptodome
 gunicorn
