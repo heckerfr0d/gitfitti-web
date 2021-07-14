@@ -4,6 +4,7 @@ from flask.helpers import url_for
 from psycopg2 import sql, connect
 from flask_login import login_user, logout_user, current_user, login_required
 from simplecrypt import encrypt, decrypt
+import base64
 import hashlib
 
 from werkzeug.utils import redirect
@@ -83,12 +84,12 @@ def register():
             sql.Identifier(name)))
         password = hashlib.sha3_512(
             request.form['password'].encode()).hexdigest()
-        auth = encrypt(app.config['SECRET_KEY'], request.form['auth'])
+        auth = base64.b64encode(encrypt(app.config['SECRET_KEY'], request.form['auth'])).decode('utf-8')
         cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)",
                        (name, password, email, auth))
         user = User(name, email, password, auth)
         if current_user.is_authenticated:
-            logout_user(current_user)
+            logout_user()
         login_user(user, remember=True)
     except:
         return render_template('register.html', page='Register', action="/register", c='message warn', extra='Invalid details or user already registered!')
@@ -232,7 +233,7 @@ def refresh():
     i = 0
     j = 0
     for name, email, auth in users:
-        auth = decrypt(app.config['SECRET_KEY'], auth).decode('utf-8')
+        auth = decrypt(app.config['SECRET_KEY'], base64.b64decode(auth)).decode('utf-8')
         headers = {
             'Authorization': 'token '+auth
         }
@@ -256,14 +257,14 @@ def refresh():
 
 @app.errorhandler(404)
 def error1(a):
-    return make_response(render_template('error.html', error='404'), 404)
+    return make_response(render_template('error.html', page='404', error='404'), 404)
 
 
 @app.errorhandler(400)
 def error2(a):
-    return make_response(render_template('error.html', error='400'), 400)
+    return make_response(render_template('error.html', page='400', error='400'), 400)
 
 
 @app.errorhandler(500)
 def error3(a):
-    return make_response(render_template('error.html', error='500'), 500)
+    return make_response(render_template('error.html', page='500', error='500'), 500)
