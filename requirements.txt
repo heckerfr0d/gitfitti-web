@@ -3,6 +3,5 @@ flask_login
 gitpython
 requests
 psycopg2
-simple-crypt
-pycryptodome
+cryptography
 gunicorn

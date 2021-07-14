@@ -3,7 +3,7 @@ from flask import render_template, request, make_response
 from flask.helpers import url_for
 from psycopg2 import sql, connect
 from flask_login import login_user, logout_user, current_user, login_required
-from simplecrypt import encrypt, decrypt
+from cryptography.fernet import Fernet
 import base64
 import hashlib
 
@@ -15,6 +15,7 @@ n = 0
 cont = []
 DATABASE_URL = os.getenv('DATABASE_URL')
 conn = connect(DATABASE_URL, sslmode='require')
+fernet = Fernet(app.config['SECRET_KEY'])
 # conn = connect(dbname="gitfitti")
 
 
@@ -84,7 +85,7 @@ def register():
             sql.Identifier(name)))
         password = hashlib.sha3_512(
             request.form['password'].encode()).hexdigest()
-        auth = base64.b64encode(encrypt(app.config['SECRET_KEY'], request.form['auth'])).decode('utf-8')
+        auth = fernet.encrypt(request.form['auth'].encode()).decode()
         cursor.execute("INSERT INTO users (name, password, email, auth) VALUES (%s, %s, %s, %s)",
                        (name, password, email, auth))
         user = User(name, email, password, auth)
@@ -233,7 +234,7 @@ def refresh():
     i = 0
     j = 0
     for name, email, auth in users:
-        auth = decrypt(app.config['SECRET_KEY'], base64.b64decode(auth)).decode('utf-8')
+        auth = fernet.decrypt(auth.encode()).decode()
         headers = {
             'Authorization': 'token '+auth
         }
