@@ -257,14 +257,14 @@ def refresh():
 
 @app.errorhandler(404)
 def error1(a):
-    return make_response(render_template('error.html', page='404', error='404'), 404)
+    return make_response(render_template('error.html', page='Error 404', error='404'), 404)
 
 
 @app.errorhandler(400)
 def error2(a):
-    return make_response(render_template('error.html', page='400', error='400'), 400)
+    return make_response(render_template('error.html', page='Error 400', error='400'), 400)
 
 
 @app.errorhandler(500)
 def error3(a):
-    return make_response(render_template('error.html', page='500', error='500'), 500)
+    return make_response(render_template('error.html', page='Error 500', error='500'), 500)
