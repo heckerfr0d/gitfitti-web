@@ -91,7 +91,7 @@ def editJS(alias, a):
                 txt[i] += ' '
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
     with open(url_for('static', 'script.js'), 'a') as f:
-        f.write(f"\ntxt['{alias}'] = {txt}\n")
+        f.write(f"\ntxt['{alias}'] = {txt}\n\n")
         if len(alias)>1:
             f.write(f"pub.push('{alias}');\n\n")
 

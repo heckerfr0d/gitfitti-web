@@ -123,7 +123,7 @@ def login(ret=None):
 def userPage(username):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return redirect(url_for('login', ret=True))
+        return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT alias, repo, a, nc FROM {}").format(
         sql.Identifier(username)))
@@ -137,7 +137,7 @@ def userPage(username):
 def add(username):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return redirect(url_for('login', ret=True))
+        return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("INSERT INTO {} (repo, alias, a, nc) VALUES (%s, %s, %s, %s)").format(
@@ -155,7 +155,7 @@ def add(username):
 def modify(username, alias):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return redirect(url_for('login', ret=True))
+        return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
@@ -176,7 +176,7 @@ def modify(username, alias):
 def delete(username, alias):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return redirect(url_for('login', ret=True))
+        return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     cursor.execute(sql.SQL("SELECT id FROM {} WHERE alias=%s").format(
         sql.Identifier(username)), (alias,))
@@ -196,7 +196,7 @@ def delete(username, alias):
 def deleteUser(username):
     if current_user.get_id() != username:
         logout_user(current_user)
-        return redirect(url_for('login', ret=True))
+        return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     cursor.execute(sql.SQL("DROP TABLE {}").format(
         sql.Identifier(username)))
@@ -204,7 +204,7 @@ def deleteUser(username):
     conn.commit()
     cursor.close()
     logout_user(current_user)
-    return redirect(url_for('login', ret=True))
+    return redirect(url_for('login', ret=403))
 
 @app.login_manager.user_loader
 def user_loader(user_id):
@@ -221,7 +221,7 @@ def user_loader(user_id):
 
 @app.login_manager.unauthorized_handler
 def unauth():
-    return redirect(url_for('login', ret=True))
+    return redirect(url_for('login', ret=403))
 
 
 @app.route('/refresh/')
