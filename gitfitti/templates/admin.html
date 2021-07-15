@@ -1,9 +1,7 @@
 {% extends "main.html" %}
 {% block main %}
-Login to merge {{n}} contributions.
-<div><input type="text" class="admin" name="name" placeholder="Username" {% if form %} value="{{form['name']}}" {% endif %}></div>
-<div><input type="text" class="admin" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}></div>
-<div><input type="password" class="admin" name="password" placeholder="Password" {% if form %} value="{{form['password']}}" {% endif %}></div>
+Authorize merge of {{n}} contributions.
+<div><input type="password" class="admin" name="password" placeholder="Secret Key :P" {% if form %} value="{{form['password']}}" {% endif %}></div>
 <div><input type="submit" class="admin do" value="Merge"></div>
 {% endblock %}
 

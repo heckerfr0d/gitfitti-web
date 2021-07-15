@@ -4,9 +4,7 @@ from flask.helpers import url_for
 from psycopg2 import sql, connect
 from flask_login import login_user, logout_user, current_user, login_required
 from cryptography.fernet import Fernet
-import base64
 import hashlib
-
 from werkzeug.utils import redirect
 from .user import User
 from .utilities import *
