@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app --workers 3 --threads 2 -k gevent
+web: gunicorn wsgi:app --workers 3 --threads 2
