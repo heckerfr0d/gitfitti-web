@@ -1,1 +1,1 @@
-web: gunicorn wsgi:app --workers 3 --threads 2 -k gevent --worker-connections 100 --preload --timeout 10
+web: gunicorn wsgi:app --workers 3 --threads 2 -k gevent --worker-connections 100 --timeout 10
