@@ -5,3 +5,4 @@ requests
 psycopg2
 cryptography
 gunicorn
+gevent
