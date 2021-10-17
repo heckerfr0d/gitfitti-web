@@ -90,7 +90,7 @@ def editJS(alias, a):
             else:
                 txt[i] += ' '
     txt = "[\n\t'" + "',\n\t'".join(txt) + "'\n];"
-    with open('static/script.js', 'a') as f:
+    with open('gitfitti/static/script.js', 'a') as f:
         f.write(f"\ntxt['{alias}'] = {txt}\n\n")
         if len(alias)>1:
             f.write(f"pub.push('{alias}');\n\n")
@@ -104,8 +104,8 @@ def openPR(name, alias, auth):
     requests.post(
         'https://api.github.com/repos/heckerfr0d/gitfitti-web/forks', headers=headers)
     url = "https://api.github.com/repos/" + \
-        name+"/gitfitti-web/contents/static/script.js"
-    base64content = base64.b64encode(open('static/script.js', "rb").read())
+        name+"/gitfitti-web/contents/gitfitti/static/script.js"
+    base64content = base64.b64encode(open('gitfitti/static/script.js', "rb").read())
     data = requests.get(url+'?ref=main', headers=headers).json()
     sha = data['sha']
     message = json.dumps({"message": "Adding '" + alias + "' to js dict",
@@ -129,8 +129,8 @@ def merge(n, cont):
     git.cmd.Git().clone(
         f"https://heckerfr0d:{TOKEN}@github.com/heckerfr0d/gitfitti-web")
     repo = git.Repo.init('gitfitti-web')
-    with open('static/script.js', 'rb') as fin:
-        with open('gitfitti-web/static/script.js', 'wb') as fout:
+    with open('gitfitti/static/script.js', 'rb') as fin:
+        with open('gitfitti-web/gitfitti/static/script.js', 'wb') as fout:
             shutil.copyfileobj(fin, fout)
     repo.git.add(update=True)
     author = git.Actor('heckerfr0d', 'hadif_b190513cs@nitc.ac.in')
