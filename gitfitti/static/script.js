@@ -722,3 +722,29 @@ txt['5 dots'] = [
 
 pub.push('5 dots');
 
+
+txt['dollar sign'] = [
+	'  #  ',
+	'#####',
+	'# #  ',
+	'#####',
+	'  # #',
+	'#####',
+	'  #  '
+];
+
+pub.push('dollar sign');
+
+
+txt['dollar sign'] = [
+	'  #  ',
+	'#####',
+	'# #  ',
+	'#####',
+	'  # #',
+	'#####',
+	'  #  '
+];
+
+pub.push('dollar sign');
+
