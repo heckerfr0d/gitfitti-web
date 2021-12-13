@@ -124,23 +124,3 @@ def openPR(name, alias, auth):
                        data=message, headers=headers).json()
     return PR['html_url']
 
-
-def merge(n, cont):
-    git.cmd.Git().clone(
-        f"https://heckerfr0d:{TOKEN}@github.com/heckerfr0d/gitfitti-web")
-    repo = git.Repo.init('gitfitti-web')
-    with open('gitfitti/static/script.js', 'rb') as fin:
-        with open('gitfitti-web/gitfitti/static/script.js', 'wb') as fout:
-            shutil.copyfileobj(fin, fout)
-    repo.git.add(update=True)
-    author = git.Actor('heckerfr0d', 'hadif_b190513cs@nitc.ac.in')
-    thanks = ""
-    if cont:
-        thanks = '@'+', @'.join(cont)
-    repo.index.commit(
-        f'Merging {n} public contributions\n Thanks {thanks} :heart:', author=author)
-    origin = repo.remote(name='origin')
-    origin.push()
-    shutil.rmtree('gitfitti-web')
-    return thanks
-

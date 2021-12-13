@@ -51,23 +51,8 @@ def contribute():
     if request.form['auth']:
         pr_link = openPR(request.form['name'], request.form['alias'], request.form['auth'])
         return render_template('contribute.html', page='Contribute', action="/contribute/", form=request.form, c='message', extra=' ', pr=pr_link, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
-    else:
-        if request.form['name']:
-            cont.append(request.form['name'])
-        n += 1
+
     return render_template('contribute.html', page='Contribute', action="/contribute/", form=request.form, c='message', extra='Contribution added! Changes will reflect in the GitHub repo when an admin merges your contribution.', oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
-
-
-@app.route('/admin/', methods=['GET', 'POST'])
-def admin():
-    global n
-    if request.method == 'GET':
-        return render_template('admin.html', page='Admin', action="/admin/", n=n)
-    thanks = merge(n, cont)
-    extra = f'Merged {n} contributions from {thanks}'
-    n = 0
-    cont.clear()
-    return render_template('admin.html', page='Admin', action="/admin/", n=n, c='message', extra=extra, form=request.form)
 
 
 @app.route('/register/', methods=['GET', 'POST'])

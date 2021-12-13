@@ -2,18 +2,17 @@
 
 {% block main %}
 <p class=message id="contribute">
-    Anyone can contribute! You may have noticed that some characters don't translate (or do it ugly). Help us expand our character set
+    Anyone with a GitHub account can contribute! You may have noticed that some characters don't translate (or do it ugly). Help us expand our character set
     by simply drawing on the grid below and giving it a name. Changes are effective immediately!
-    Credits will be given in the commit message. If you want to receive contributor status instead, <a href="https://github.com/settings/tokens">generate a Personal Access Token</a>
-    with Repo scope and a fork will be created and a PR opened in your account.
+    A fork of the repo will be created with and a PR opened in your account.
 </p>
 {% endblock %}
 
 {% block submit %}
 <div>
     <input type="text" class="admin" name="alias" placeholder="Alias (for the design)" {% if form %} value="{{form['alias']}}" {% endif %}>
-    <input type="text" class="admin" name="name" placeholder="GitHub username (to be thanked in the commit message)" {% if form %} value="{{form['name']}}" {% endif %}>
-    <input type="password" class="admin" name="auth" placeholder="Personal Access Token (If you want contributor status)" {% if form %} value="{{form['auth']}}" {% endif %}>
+    <input type="text" class="admin" name="name" placeholder="GitHub username" {% if form %} value="{{form['name']}}" {% endif %}>
+    <input hidden type="password" class="admin" name="auth" placeholder="Personal Access Token (If you want contributor status)" {% if form %} value="{{form['auth']}}" {% endif %}>
 </div>
 <div>
     <input type="submit" class="do" value="Save">
