@@ -34,6 +34,8 @@
     --c2: #39d353;
     --c1h: #0e4429;
     --c2h: #26a641;
+    --auth-bg: #238636;
+    --auth-bg-hover: #2ea043;
 }
 
 
@@ -73,7 +75,8 @@
     --c2: #216e39;
     --c1h: #9be9a8;
     --c2h: #30a14e;
-
+    --auth-bg: #2da44e;
+    --auth-bg-hover: #2c974b;
 }
 
 @media only screen and (max-width: 450px) 
@@ -448,3 +451,14 @@ svg {
     text-decoration: none;
 }
 
+.auth{
+    background-color: var(--auth-bg)!important;
+    padding: 5px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.auth:hover{
+    background-color: var(--auth-bg-hover)!important;
+}

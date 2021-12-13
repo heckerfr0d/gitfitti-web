@@ -20,6 +20,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
 <script src="{{ url_for('static', filename='jquery-3.6.0.slim.min.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+{% if auth %}
+<script>
+    localStorage.setItem('auth', '{{ auth }}');
+</script>
+{% endif %}
 
 </head>
 
@@ -64,12 +69,27 @@
     {% endif %}
     <br>
     <div class="root" id = "main">
-        <form action={{action}} method="post">
+        {% if check %}
+        <script>
+            function handleClick() {
+                if (!localStorage.getItem('auth')) {
+                    let url = '{{oauth_url}}'.replaceAll('&amp;', '&');
+                    window.open(url, '_blank');
+                    return false;
+                }
+                else {
+                    document.querySelector('input[name="auth"]').value = localStorage.getItem('auth');
+                    return true;
+                }
+            }
+        </script>
+        {% endif %}
+        <form action={{action}} method="post" onsubmit="return handleClick()">
             {% block main %}
             <div>
                 <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
                 <input class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
-                <input class="textfield" type="password" name="password" placeholder="Personal Access Token (Repo scope)" {% if form %} value="{{form['password']}}" {% endif %}>
+                <input hidden class="textfield" type="password" name="auth" >
             </div>
             <div>
                 <input class="textfield" type="text" name="repo" placeholder="Repo name" {% if form %} value="{{form['repo']}}" {% endif %}>

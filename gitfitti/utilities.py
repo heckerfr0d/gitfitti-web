@@ -29,10 +29,10 @@ def getDates(year=None):
 
 def getActiveDates(dates, a):
     ad = []
-    for i in range(7):
-        for j in range(52):
+    for j in range(52):
+        for i in range(7):
             for k in range(a[i][j]):
-                ad.append(dates[i][j])
+                ad.append(dates[i][j]+datetime.timedelta(seconds=k))
     return ad
 
 
