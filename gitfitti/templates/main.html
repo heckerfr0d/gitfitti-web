@@ -87,14 +87,14 @@
         <form action={{action}} method="post" onsubmit="return handleClick()">
             {% block main %}
             <div>
-                <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
-                <input class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
+                <input id="row0" class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
+                <input id="row0" class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
                 <input hidden class="textfield" type="password" name="auth" >
             </div>
             <div>
-                <input class="textfield" type="text" name="repo" placeholder="Repo name" {% if form %} value="{{form['repo']}}" {% endif %}>
-                <input class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969" {% if form %} value="{{form['year']}}" {% endif %}>
-                <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" {% if form %} value="{{form['nc']}}" {% endif %}>
+                <input id="repo" class="textfield" type="text" name="repo" placeholder="Repo name" {% if form %} value="{{form['repo']}}" {% endif %}>
+                <input id="year" class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969" {% if form %} value="{{form['year']}}" {% endif %}>
+                <input id="nc" class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" {% if form %} value="{{form['nc']}}" {% endif %}>
             </div>
             {% endblock %}
 

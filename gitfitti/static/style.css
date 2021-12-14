@@ -462,3 +462,7 @@ svg {
 .auth:hover{
     background-color: var(--auth-bg-hover)!important;
 }
+
+#row0{
+    width: 49.2%;
+}

@@ -5,6 +5,7 @@ from cryptography.fernet import Fernet
 fernet = Fernet(current_app.config['SECRET_KEY'])
 DATABASE_URL = current_app.config['DATABASE_URL']
 conn = connect(DATABASE_URL, sslmode='require')
+# conn = connect(dbname='gitfitti')
 
 class User:
     def __init__(self, name, password, email, auth):
