@@ -193,7 +193,6 @@ def refresh():
         ret = commit(name, email, repurl, repo, a, nc)
         if ret > 0:
             i += ret
-        print(ret)
     return render_template('main.html', page='Home', action="/", c='message', extra=f"Created {i} commits across {len(everything)} repos for {len(everything)} users :)")
 
 
