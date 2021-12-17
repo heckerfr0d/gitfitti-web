@@ -57,13 +57,15 @@
 
     {% if extra %}
     <div class="{{c}}" name="result">
+        <p id="res">
         {{extra}}
         {% if n %}
-        SUCCESS! Created {{n}} commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
+        Creating commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
         {% endif %}
         {% if pr %}
         Pull Request opened/updated! <a href={{pr}}>Check it out!</a>
         {% endif %}
+        </p>
         <button class="close" type="button" aria-label="Dismiss this message" id="dismiss">&#10005;</button>
     </div>
     {% endif %}
@@ -136,6 +138,40 @@
             </div>
             {% endblock %}
         </form>
+        {% if progress %}
+        {% block progress %}
+        <div class="progress" id="progress">
+            <span class="progressbar" id="progressbar"></span>
+            <span class="progresslabel" id="progresslabel">0/0</span>
+        </div>
+        <script>
+            var progress = document.getElementById('progress');
+            var progressbar = document.getElementById('progressbar');
+            var progresslabel = document.getElementById('progresslabel');
+            var n = 1;
+            var i = 0;
+            var tid = '{{taskid}}';
+            var interval = setInterval(function() {
+                fetch('/status/'+tid, {
+                    method: 'GET'
+                }).then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    if (data['state']=='SUCCESS') {
+                        clearInterval(interval);
+                        progress.style.display = 'none';
+                        message = document.getElementById('res');
+                        message.innerHTML = 'Created ' + data['total'] + message.innerHTML.trim().slice(8);
+                    }
+                    i = data['current'];
+                    n = data['total'];
+                    progressbar.style.width = (i/n*100)+'%';
+                    progresslabel.innerHTML = i+'/'+n;
+                });
+            }, 2000);
+        </script>
+        {% endblock %}
+        {% endif %}
     </div>
     {% block user %}
     {% endblock %}

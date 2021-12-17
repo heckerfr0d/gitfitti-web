@@ -28,13 +28,20 @@ def main():
     auth = request.form['auth']
     repurl = f"https://{name}:{auth}@github.com/{name}/{repname}"
     year = request.form.get('year', None)
-    ret = commit(name, email, repurl, repname, a,
-                 int(request.form['nc']), year)
-    if ret == -1:
+    ret = commit.apply_async((name, email, repurl, repname, a,
+                 int(request.form['nc']), year))
+    task = commit.AsyncResult(ret.id)
+    if task.result == -1:
         return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
-    if ret == -2:
+    if task.result == -2:
         return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not push to the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
-    return render_template('main.html', page='Home', action="/", c='message', extra=' ', n=ret, profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
+    return render_template('main.html', page='Home', action="/", c='message', n=3720, extra=' ', profile=f'https://github.com/{name}', name=name, repo=repurl, repname=repname, form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True, progress=True, taskid=task.id)
+
+
+@app.route('/status/<taskid>')
+def status(taskid):
+    task = commit.AsyncResult(taskid)
+    return {'state': task.state, 'current': task.info.get('current'), 'total': task.info.get('total'), 'status': task.info.get('status')}
 
 
 @app.route('/contribute/', methods=['GET', 'POST'])
@@ -114,7 +121,7 @@ def redir(target):
 @login_required
 def userPage(username):
     if current_user.get_id() != username:
-        logout_user(current_user)
+        logout_user()
         return redirect(url_for('login', ret=403))
     rows = get_user_graffiti(username)
     return render_template('user.html', page=username, action=f"/users/{username}/add/", username=username, rows=rows,  c="message", extra=f"Hi {username}, Welcome to your page!", auth=current_user.auth)
@@ -124,7 +131,7 @@ def userPage(username):
 @login_required
 def add(username):
     if current_user.get_id() != username:
-        logout_user(current_user)
+        logout_user()
         return redirect(url_for('login', ret=403))
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
     rows = add_graffiti(username, request.form['alias'], request.form['repo'], a, request.form['nc'])
@@ -135,7 +142,7 @@ def add(username):
 @login_required
 def modify(username, alias):
     if current_user.get_id() != username:
-        logout_user(current_user)
+        logout_user()
         return redirect(url_for('login', ret=403))
     cursor = conn.cursor()
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
@@ -147,7 +154,7 @@ def modify(username, alias):
 @login_required
 def delete(username, alias):
     if current_user.get_id() != username:
-        logout_user(current_user)
+        logout_user()
         return redirect(url_for('login', ret=403))
     rows = delete_graffiti(username, alias)
     return render_template('user.html', page=username, action=f"/users/{username}/add/", c="message", extra=f"Removed '{alias}' from the list!", username=username, rows=rows)
@@ -174,10 +181,34 @@ def unauth():
     return redirect(url_for('login', ret=403))
 
 
+# @celery.task(bind=True)
+# def massCommit(self, everything):
+#     i = 0
+#     total = len(everything)
+#     for name, email, auth, repo, a, nc in everything:
+#         auth = fernet.decrypt(auth.encode()).decode()
+#         headers = {
+#             'Authorization': 'token '+auth
+#         }
+#         repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
+#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Deleting {name}\'s {repo}'})
+#         requests.delete(
+#             f'https://api.github.com/repos/{name}/{repo}', headers=headers)
+#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Creating {repo} for {name}'})
+#         data = json.dumps(
+#             {"name": repo, "description": "A repo for GitHub graffiti"})
+#         requests.post('https://api.github.com/user/repos',
+#                         headers=headers, data=data)
+#         ret = commit.apply_async((name, email, repurl, repo, a, nc))
+#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Creating commits in {repo}', 'target': ret.id})
+#         i += 1
+#     return {'current': total, 'total': total, 'status': 'Complete!', 'result': 'Success!'}
+
+
 @app.route('/refresh/')
 def refresh():
     everything = get_everything()
-    i = 0
+    total = len(everything)
     for name, email, auth, repo, a, nc in everything:
         auth = fernet.decrypt(auth.encode()).decode()
         headers = {
@@ -190,10 +221,23 @@ def refresh():
             {"name": repo, "description": "A repo for GitHub graffiti"})
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
-        ret = commit(name, email, repurl, repo, a, nc)
-        if ret > 0:
-            i += ret
-    return render_template('main.html', page='Home', action="/", c='message', extra=f"Created {i} commits across {len(everything)} repos for {len(everything)} users :)")
+        ret = commit.apply_async((name, email, repurl, repo, a, nc))
+    return f"{total} repos... I got it from here ;)"
+
+
+# @app.route('/refstatus/<taskid>/')
+# def refstatus(taskid):
+#     task = celery.AsyncResult(taskid)
+#     response = {
+#         'state': task.state,
+#         'current': task.info.get('current', 0),
+#         'total': task.info.get('total', 1),
+#         'name': task.info.get('name', ''),
+#         'status': task.info.get('status', '')
+#     }
+#     if 'target' in task.info:
+#         response['target'] = task.info['target']
+#     return response
 
 
 @app.errorhandler(404)

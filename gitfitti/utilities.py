@@ -1,4 +1,4 @@
-from flask.helpers import url_for
+from . import celery
 import git
 import datetime
 import os
@@ -36,22 +36,31 @@ def getActiveDates(dates, a):
     return ad
 
 
-def commit(name, email, url, repname, a, nc, year=None):
+@celery.task(bind=True)
+def commit(self, name, email, url, repname, a, nc, year=None):
     if year:
         dates = getActiveDates(getDates(int(year)), a)
     else:
         dates = getActiveDates(getDates(), a)
     author = git.Actor(name, email)
+    total = nc*len(dates)
+    i = 0
     if not os.path.isdir(repname):
         try:
             git.cmd.Git().clone(url)
         except:
-            return -1
+            return {'current': i, 'total': total, 'status': "Clone Failed!",
+            'result': -1}
     rep = git.Repo.init(repname)
     for date in dates:
         for n in range(nc):
             rep.index.commit("made with love by gitfitti", author=author,
                              committer=author, author_date=date.isoformat())
+        i += nc
+        self.update_state(state='PROGRESS',
+                          meta={'current': i,
+                                'total': total,
+                                'status': 'Committing...'})
     try:
         rep.remotes.origin.set_url(url)
     except:
@@ -61,8 +70,10 @@ def commit(name, email, url, repname, a, nc, year=None):
         shutil.rmtree(repname)
     except:
         shutil.rmtree(repname)
-        return -2
-    return nc*len(dates)
+        return {'current': i, 'total': total, 'status': "Push Failed!",
+            'result': -2}
+    return {'current': i, 'total': total, 'status': 'All done!',
+            'result': i}
 
 
 def editJS(alias, a):
