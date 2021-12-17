@@ -4,7 +4,7 @@ import os
 from celery import Celery
 
 login_manager = LoginManager()
-celery = Celery(__name__)
+celery = Celery(__name__, broker=os.getenv('REDIS_URL'), result_backend=os.getenv('REDIS_URL'))
 
 def init_app():
     app = Flask(__name__)
