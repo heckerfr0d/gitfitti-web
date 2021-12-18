@@ -129,30 +129,29 @@
                 var progresslabel = form.querySelector('span[id="progresslabel"]');
                 var tid = data['taskid'];
                 var id=0;
-                while(id<tid.length) {
-                    var interval = setInterval(function() {
-                        fetch('/status/'+tid[id], {
-                            method: 'GET'
-                        }).then(function(response) {
-                            return response.json();
-                        }).then(function(data) {
-                            if (data['state']=='SUCCESS') {
+                var interval = setInterval(function() {
+                    fetch('/status/'+tid[id], {
+                        method: 'GET'
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(data) {
+                        if (data['state']=='SUCCESS') {
+                            id++;
+                            if (id == tid.length)
                                 clearInterval(interval);
-                                progress.style.display = 'none';
-                                message = document.getElementById('res');
-                                message.innerHTML = 'All done! Created ' + data['total'] + ' commits in ' + repo + '.';
-                                id++;
-                            }
-                            else {
-                                i = data['current'];
-                                n = data['total'];
-                                progressbar.style.width = (i/n*100)+'%';
-                                progresslabel.innerHTML = i+'/'+n;
-                                progress.style.display = 'block';
-                            }
-                        });
-                    }, 2000);
-                }
+                            progress.style.display = 'none';
+                            message = document.getElementById('res');
+                            message.innerHTML = 'Created ' + data['total'] + ' commits in ' + repo + '.';
+                        }
+                        else {
+                            i = data['current'];
+                            n = data['total'];
+                            progressbar.style.width = (i/n*100)+'%';
+                            progresslabel.innerHTML = i+'/'+n;
+                            progress.style.display = 'block';
+                        }
+                    });
+                }, 2000);
             }
         });
     }

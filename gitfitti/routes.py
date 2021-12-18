@@ -179,7 +179,8 @@ def modify(username, alias):
         logout_user()
         return redirect(url_for('login', ret=403))
     a = request.json['a']
-    rows = update_graffiti(username, alias, request.json['alias'], request.json['repo'], a, request.json['nc'], request.json['year'])
+    year = request.json.get('year', None)
+    rows = update_graffiti(username, alias, request.json['alias'], request.json['repo'], a, request.json['nc'], year)
     return "sett", 200
 
 
