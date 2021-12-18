@@ -157,10 +157,10 @@ def apply(username):
     requests.post('https://api.github.com/user/repos',
                     headers=headers, data=data)
     ids = []
-    for (name, email, auth, repo, a, nc, year) in get_old(username):
-        ret = commit.apply((name, email, repurl, repo, a, nc, year))
+    for (name, email, auth, repo, a, nc, year) in get_old(username, request.json['repo']):
+        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
         ids.append(ret.id)
-    ret = commit.apply((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
+    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
     ids.append(ret.id)
     return {"taskid": ids}
 
@@ -247,11 +247,11 @@ def refresh():
             {"name": repo, "description": "A repo for GitHub graffiti"})
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
-        oldies = get_old(name)
+        oldies = get_old(name, repo)
         total += len(oldies)
         for (name, email, auth, repo, a, nc, year) in oldies:
-            ret = commit.apply((name, email, repurl, repo, a, nc, year))
-        ret = commit.apply((name, email, repurl, repo, a, nc, year))
+            ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
     return f"{total} graffitis... I can prolly do this ;)"
 
 
