@@ -146,7 +146,16 @@ def apply(username):
         logout_user()
         return redirect(url_for('login', ret=403))
     a = request.json['a']
+    headers = {
+        'Authorization': 'token '+current_user.auth
+    }
     repurl = f"https://{username}:{current_user.auth}@github.com/{username}/{request.json['repo']}"
+    requests.delete(
+        f'https://api.github.com/repos/{username}/{request.json["repo"]}', headers=headers)
+    data = json.dumps(
+        {"name": request.json['repo'], "description": "A repo for GitHub graffiti"})
+    requests.post('https://api.github.com/user/repos',
+                    headers=headers, data=data)
     ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
     return {"taskid": ret.id}
 
