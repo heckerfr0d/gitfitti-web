@@ -134,9 +134,9 @@ def add(username):
     if current_user.get_id() != username:
         logout_user()
         return redirect(url_for('login', ret=403))
-    a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
-    rows = add_graffiti(username, request.form['alias'], request.form['repo'], a, request.form['nc'])
-    return render_template('user.html', page=username, action=f"/users/{username}/add/", c="message", extra=f"Added '{request.form['alias']}' to the list!", username=username, rows=rows)
+    a = request.json['a']
+    rows = add_graffiti(username, request.json['alias'], request.json['repo'], a, request.json['nc'])
+    return "sett", 200
 
 
 @app.route('/users/<username>/apply/', methods=['POST'])

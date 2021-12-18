@@ -147,6 +147,42 @@
         });
     }
 
+    function add() {
+        var username = '{{username}}';
+        var a = Array.from(Array(7), () => new Array(52));
+        var act = '/users/'+username+'/add/';
+        var form = document.querySelector('form[action="'+act+'"]');
+        alias = form.querySelector('input[name="alias"]').value;
+        var repo = form.querySelector('input[name="repo"]').value;
+        var nc = form.querySelector('input[name="nc"]').value;
+        for (var i=0; i<7; i++) {
+            for (var j=0; j<52; j++) {
+                a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
+            }
+        }
+        fetch(act, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                alias: alias,
+                repo: repo,
+                a: a,
+                nc: nc
+            })
+        }).then(function(response) {
+            if (response.status == 200) {
+                message = document.getElementById('res');
+                message.innerHTML = 'Added ' + alias + '.';
+            }
+            else {
+                message = document.getElementById('res');
+                message.innerHTML = 'Error adding ' + alias + '.';
+            }
+        });
+    }
+
     function update(alias) {
         var username = '{{username}}';
         var a = Array.from(Array(7), () => new Array(52));
