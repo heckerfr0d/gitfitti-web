@@ -60,7 +60,7 @@
         <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
     <input type="button" class="user" value="Update" onclick="update('{{alias|safe}}')">
-    <input type="button" class="user" value="Apply Now" onclick="apply('{{alias|safe}}', '{{repo}}', {{a}}, {{nc}})">
+    <input type="button" class="user" value="Apply Now" onclick="apply('{{alias|safe}}')">
     {% set act = "/users/"+username+"/delete/"+alias %}
     <input type="button" class="user" value="Delete" onclick="delet('{{alias|safe}}')">
     <div id="progress">
@@ -87,8 +87,19 @@
         $('#main').show();
     }
 
-    function apply(alias, repo, a, nc) {
+    function apply(alias) {
         var username = '{{username}}';
+        var a = Array.from(Array(7), () => new Array(52));
+        var act = '/users/'+username+'/'+alias;
+        var form = document.querySelector('form[action="'+act+'"]');
+        alias = form.querySelector('input[name="alias"]').value;
+        var repo = form.querySelector('input[name="repo"]').value;
+        var nc = form.querySelector('input[name="nc"]').value;
+        for (var i=0; i<7; i++) {
+            for (var j=0; j<52; j++) {
+                a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
+            }
+        }
         fetch('/users/'+username+'/apply', {
             method: 'POST',
             headers: {
