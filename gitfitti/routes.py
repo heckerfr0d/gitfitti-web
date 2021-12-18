@@ -135,7 +135,7 @@ def add(username):
         logout_user()
         return redirect(url_for('login', ret=403))
     a = request.json['a']
-    rows = add_graffiti(username, request.json['alias'], request.json['repo'], a, request.json['nc'])
+    rows = add_graffiti(username, request.json['alias'], request.json['repo'], a, request.json['nc'], request.json['year'])
     return "sett", 200
 
 
@@ -156,8 +156,13 @@ def apply(username):
         {"name": request.json['repo'], "description": "A repo for GitHub graffiti"})
     requests.post('https://api.github.com/user/repos',
                     headers=headers, data=data)
+    ids = []
+    for (name, email, auth, repo, a, nc, year) in get_old(username):
+        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+        ids.append(ret.id)
     ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
-    return {"taskid": ret.id}
+    ids.append(ret.id)
+    return {"taskid": ids}
 
 
 @app.route('/users/<username>/<alias>/', methods=['POST'])
@@ -167,7 +172,7 @@ def modify(username, alias):
         logout_user()
         return redirect(url_for('login', ret=403))
     a = request.json['a']
-    rows = update_graffiti(username, alias, request.json['alias'], request.json['repo'], a, request.json['nc'])
+    rows = update_graffiti(username, alias, request.json['alias'], request.json['repo'], a, request.json['nc'], request.json['year'])
     return "sett", 200
 
 
@@ -230,7 +235,7 @@ def unauth():
 def refresh():
     everything = get_everything()
     total = len(everything)
-    for name, email, auth, repo, a, nc in everything:
+    for name, email, auth, repo, a, nc, year in everything:
         auth = fernet.decrypt(auth.encode()).decode()
         headers = {
             'Authorization': 'token '+auth
@@ -242,8 +247,12 @@ def refresh():
             {"name": repo, "description": "A repo for GitHub graffiti"})
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
-        ret = commit.apply_async((name, email, repurl, repo, a, nc))
-    return f"{total} repos... I got it from here ;)"
+        oldies = get_old(name)
+        total += len(oldies)
+        for (name, email, auth, repo, a, nc, year) in oldies:
+            ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+    return f"{total} graffitis... I can prolly do this ;)"
 
 
 # @app.route('/refstatus/<taskid>/')

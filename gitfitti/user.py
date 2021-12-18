@@ -58,21 +58,21 @@ def update_auth(username, auth):
 
 def get_user_graffiti(username):
     cur = conn.cursor()
-    cur.execute("SELECT alias, repo, a, nc FROM graffiti WHERE name = %s", (username,))
+    cur.execute("SELECT alias, repo, a, nc, year FROM graffiti WHERE name = %s", (username,))
     graffiti = cur.fetchall()
     cur.close()
     return graffiti
 
-def add_graffiti(username, alias, repo, a, nc):
+def add_graffiti(username, alias, repo, a, nc, year):
     cur = conn.cursor()
-    cur.execute("INSERT INTO graffiti (name, alias, repo, a, nc) VALUES (%s, %s, %s, %s, %s)", (username, alias, repo, a, nc))
+    cur.execute("INSERT INTO graffiti (name, alias, repo, a, nc, year) VALUES (%s, %s, %s, %s, %s, %s)", (username, alias, repo, a, nc, year))
     conn.commit()
     cur.close()
     return get_user_graffiti(username)
 
-def update_graffiti(username, oldalias, newalias, repo, a, nc):
+def update_graffiti(username, oldalias, newalias, repo, a, nc, year):
     cur = conn.cursor()
-    cur.execute("UPDATE graffiti SET alias = %s, repo = %s, a = %s, nc = %s WHERE name = %s AND alias = %s", (newalias, repo, a, nc, username, oldalias))
+    cur.execute("UPDATE graffiti SET alias = %s, repo = %s, a = %s, nc = %s, year = %s WHERE name = %s AND alias = %s", (newalias, repo, a, nc, year, username, oldalias))
     conn.commit()
     cur.close()
     return get_user_graffiti(username)
@@ -92,9 +92,16 @@ def delete_user(username):
     cur.close()
     return True
 
+def get_old(username):
+    cur = conn.cursor()
+    cur.execute("SELECT u.name, u.email, u.auth, g.repo, g.a, g.nc, g.year FROM users u, graffiti g WHERE u.name = g.name AND g.year IS NOT NULL AND u.name = %s", (username,))
+    oldies = cur.fetchall()
+    cur.close()
+    return oldies
+
 def get_everything():
     cur = conn.cursor()
-    cur.execute("SELECT DISTINCT ON (g.name, g.repo) u.name, u.email, u.auth, g.repo, g.a, g.nc FROM users u, graffiti g WHERE u.name = g.name ORDER BY g.name, g.repo, RANDOM()")
+    cur.execute("SELECT DISTINCT ON (g.name, g.repo) u.name, u.email, u.auth, g.repo, g.a, g.nc, g.year FROM users u, graffiti g WHERE u.name = g.name AND g.year IS NULL ORDER BY g.name, g.repo, RANDOM()")
     everything = cur.fetchall()
     cur.close()
     return everything

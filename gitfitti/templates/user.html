@@ -5,7 +5,8 @@
 
 {% block submit %}
 <div>
-    <input type="text" class="admin" name="alias" placeholder="Give it a name">
+    <input type="text" class="rep" name="alias" placeholder="Give it a name">
+    <input class="textfield num" type="number" name="year" placeholder="Year" min="1">
     <input type="text" class="rep" name="repo" placeholder="Repo name">
     <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1">
 </div>
@@ -21,7 +22,7 @@
 <div id="list" class="scroll-vertical root" style="display: none;">
 <input type="button" class="back" value="<" onclick="hideList()">
 {% if rows %}
-{% for alias, repo, a, nc in rows %}
+{% for alias, repo, a, nc, year in rows %}
 {% set act = "/users/"+username+"/"+alias %}
 <div>
 <form action={{act}} method="POST">
@@ -55,7 +56,8 @@
         <input type="button" class="tr" name="clear" value="Clear">
     </div>
     <div>
-        <input type="text" class="admin" name="alias" placeholder="Give it a name" value={{alias}}>
+        <input type="text" class="rep" name="alias" placeholder="Give it a name" value={{alias}}>
+        <input class="textfield num" type="number" name="year" placeholder="Year" min="1" value={{year}}>
         <input type="text" class="rep" name="repo" placeholder="Repo name" value={{repo}}>
         <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
@@ -119,30 +121,30 @@
                 var progress = form.querySelector('div[id="progress"]');
                 var progressbar = form.querySelector('span[id="progressbar"]');
                 var progresslabel = form.querySelector('span[id="progresslabel"]');
-                var n = 1;
-                var i = 0;
                 var tid = data['taskid'];
-                var interval = setInterval(function() {
-                    fetch('/status/'+tid, {
-                        method: 'GET'
-                    }).then(function(response) {
-                        return response.json();
-                    }).then(function(data) {
-                        if (data['state']=='SUCCESS') {
-                            clearInterval(interval);
-                            progress.style.display = 'none';
-                            message = document.getElementById('res');
-                            message.innerHTML = 'All done! Created ' + data['total'] + ' commits in ' + repo + '.';
-                        }
-                        else {
-                            i = data['current'];
-                            n = data['total'];
-                            progressbar.style.width = (i/n*100)+'%';
-                            progresslabel.innerHTML = i+'/'+n;
-                            progress.style.display = 'block';
-                        }
-                    });
-                }, 1000);
+                for (var id in tid) {
+                    var interval = setInterval(function() {
+                        fetch('/status/'+tid[id], {
+                            method: 'GET'
+                        }).then(function(response) {
+                            return response.json();
+                        }).then(function(data) {
+                            if (data['state']=='SUCCESS') {
+                                clearInterval(interval);
+                                progress.style.display = 'none';
+                                message = document.getElementById('res');
+                                message.innerHTML = 'All done! Created ' + data['total'] + ' commits in ' + repo + '.';
+                            }
+                            else {
+                                i = data['current'];
+                                n = data['total'];
+                                progressbar.style.width = (i/n*100)+'%';
+                                progresslabel.innerHTML = i+'/'+n;
+                                progress.style.display = 'block';
+                            }
+                        });
+                    }, 1000);
+                }
             }
         });
     }
