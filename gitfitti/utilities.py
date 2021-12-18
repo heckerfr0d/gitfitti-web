@@ -32,7 +32,7 @@ def getActiveDates(dates, a, nc):
     for j in range(52):
         for i in range(7):
             for k in range(nc*a[i][j]):
-                ad.append(dates[i][j]+datetime.timedelta(seconds=k))
+                ad.append((dates[i][j]+datetime.timedelta(seconds=k)).isoformat())
     return ad
 
 
@@ -58,7 +58,7 @@ def commit(self, name, email, url, repname, dates):
     rep = git.Repo.init(repname)
     for date in dates:
         rep.index.commit("made with love by gitfitti", author=author,
-                            committer=author, author_date=date.isoformat())
+                            committer=author, author_date=date)
         i += 1
         self.update_state(state='PROGRESS',
                           meta={'current': i,
