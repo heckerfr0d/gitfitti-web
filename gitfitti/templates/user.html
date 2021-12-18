@@ -105,9 +105,9 @@
             if ('taskid' in data) {
                 var act = '/users/'+username+'/'+alias;
                 var form = document.querySelector('form[action="'+act+'"]');
-                var progress = form.getElementById('progress');
-                var progressbar = form.getElementById('progressbar');
-                var progresslabel = form.getElementById('progresslabel');
+                var progress = form.querySelector('div[id="progress"]');
+                var progressbar = form.querySelector('span[id="progressbar"]');
+                var progresslabel = form.querySelector('span[id="progresslabel"]');
                 var n = 1;
                 var i = 0;
                 var tid = data['taskid'];
