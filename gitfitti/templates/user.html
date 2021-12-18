@@ -60,7 +60,7 @@
         <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
     <input type="button" class="user" value="Update" onclick="update('{{alias|safe}}')">
-    <input type="button" class="user" value="Apply Now" onclick="apply('{{repo}}', {{a}}, {{nc}})">
+    <input type="button" class="user" value="Apply Now" onclick="apply('{{alias|safe}}', '{{repo}}', {{a}}, {{nc}})">
     {% set act = "/users/"+username+"/delete/"+alias %}
     <input type="button" class="user" value="Delete" onclick="delet('{{alias|safe}}')">
     <div id="progress">
@@ -87,7 +87,7 @@
         $('#main').show();
     }
 
-    function apply(repo, a, nc) {
+    function apply(alias, repo, a, nc) {
         var username = '{{username}}';
         fetch('/users/'+username+'/apply', {
             method: 'POST',
@@ -103,9 +103,11 @@
             return response.json();
         }).then(function(data) {
             if ('taskid' in data) {
-                var progress = document.getElementById('progress');
-                var progressbar = document.getElementById('progressbar');
-                var progresslabel = document.getElementById('progresslabel');
+                var act = '/users/'+username+'/'+alias;
+                var form = document.querySelector('form[action="'+act+'"]');
+                var progress = form.getElementById('progress');
+                var progressbar = form.getElementById('progressbar');
+                var progresslabel = form.getElementById('progresslabel');
                 var n = 1;
                 var i = 0;
                 var tid = data['taskid'];
