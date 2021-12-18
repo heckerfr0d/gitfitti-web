@@ -94,7 +94,7 @@ def delete_user(username):
 
 def get_old(username, repo):
     cur = conn.cursor()
-    cur.execute("SELECT u.name, u.email, u.auth, g.repo, g.a, g.nc, g.year FROM users u, graffiti g WHERE u.name = g.name AND g.year IS NOT NULL AND u.name = %s AND g.repo = %s ORDER BY g.year", (username, repo))
+    cur.execute("SELECT g.a, g.nc, g.year FROM graffiti g WHERE g.year IS NOT NULL AND g.name = %s AND g.repo = %s ORDER BY g.year", (username, repo))
     oldies = cur.fetchall()
     cur.close()
     return oldies
