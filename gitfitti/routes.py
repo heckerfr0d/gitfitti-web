@@ -163,7 +163,9 @@ def apply(username):
         {"name": request.json['repo'], "description": "A repo for GitHub graffiti"})
     requests.post('https://api.github.com/user/repos',
                     headers=headers, data=data)
-    dates = [getBulkDates(a, nc, year) for (name, email, auth, repo, a, nc, year) in get_old(username, request.json['repo'])]
+    dates = []
+    for (a, nc, year) in get_old(username, request.json['repo']):
+        dates += getBulkDates(a, nc, year)
     dates += getBulkDates(a, int(request.json['nc']), None)
     ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], dates))
     return {"taskid": ret.id}
@@ -253,8 +255,10 @@ def refresh():
             {"name": repo, "description": "A repo for GitHub graffiti"})
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
-        oldies = get_old(name, repo)
-        dates = [getBulkDates(a, nc, year) for (name, email, auth, repo, a, nc, year) in oldies]
+        dates = []
+        for (a, nc, year) in get_old(name, repo):
+            dates += getBulkDates(a, nc, year)
+        dates += getBulkDates(a, nc, None)
         ret = commit.apply_async((name, email, repurl, repo, dates))
     return f"{len(dates)} commits... On it ;)"
 
