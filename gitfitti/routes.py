@@ -152,7 +152,6 @@ def apply(username):
     if current_user.get_id() != username:
         logout_user()
         return redirect(url_for('login', ret=403))
-    a = request.json['a']
     headers = {
         'Authorization': 'token '+current_user.auth
     }
@@ -166,6 +165,7 @@ def apply(username):
     dates = []
     for (a, nc, year) in get_old(username, request.json['repo']):
         dates += getBulkDates(a, nc, year)
+    a = request.json['a']
     dates += getBulkDates(a, int(request.json['nc']), None)
     ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], dates))
     return {"taskid": ret.id}
@@ -256,8 +256,8 @@ def refresh():
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
         dates = []
-        for (a, nc, year) in get_old(name, repo):
-            dates += getBulkDates(a, nc, year)
+        for (ao, nco, year) in get_old(name, repo):
+            dates += getBulkDates(ao, nco, year)
         dates += getBulkDates(a, nc, None)
         ret = commit.apply_async((name, email, repurl, repo, dates))
     return f"{len(dates)} commits... On it ;)"
