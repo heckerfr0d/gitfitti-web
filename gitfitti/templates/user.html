@@ -64,7 +64,9 @@
         <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
     <input type="button" class="user" value="Update" onclick="update('{{alias|safe}}')">
+    {% if not year %}
     <input type="button" class="user" value="Apply Now" onclick="apply('{{alias|safe}}')">
+    {% endif %}
     {% set act = "/users/"+username+"/delete/"+alias %}
     <input type="button" class="user" value="Delete" onclick="delet('{{alias|safe}}')">
     <div id="progress">
@@ -159,6 +161,7 @@
         alias = form.querySelector('input[name="alias"]').value;
         var repo = form.querySelector('input[name="repo"]').value;
         var nc = form.querySelector('input[name="nc"]').value;
+        var year = form.querySelector('input[name="year"]').value;
         for (var i=0; i<7; i++) {
             for (var j=0; j<52; j++) {
                 a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
@@ -173,7 +176,8 @@
                 alias: alias,
                 repo: repo,
                 a: a,
-                nc: nc
+                nc: nc,
+                year: year
             })
         }).then(function(response) {
             if (response.status == 200) {
@@ -195,6 +199,7 @@
         alias = form.querySelector('input[name="alias"]').value;
         var repo = form.querySelector('input[name="repo"]').value;
         var nc = form.querySelector('input[name="nc"]').value;
+        var year = form.querySelector('input[name="year"]').value;
         for (var i=0; i<7; i++) {
             for (var j=0; j<52; j++) {
                 a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
@@ -209,7 +214,8 @@
                 alias: alias,
                 repo: repo,
                 a: a,
-                nc: nc
+                nc: nc,
+                year: year
             })
         }).then(function(response) {
             if (response.status == 200) {
