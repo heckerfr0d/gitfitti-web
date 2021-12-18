@@ -31,8 +31,8 @@ def getActiveDates(dates, a, nc):
     ad = []
     for j in range(52):
         for i in range(7):
-            for k in range(a[i][j]):
-                ad += [dates[i][j]+datetime.timedelta(seconds=k)]*nc
+            for k in range(nc*a[i][j]):
+                ad.append(dates[i][j]+datetime.timedelta(seconds=k))
     return ad
 
 
