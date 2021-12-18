@@ -29,8 +29,8 @@ def main():
     auth = request.form['auth']
     repurl = f"https://{name}:{auth}@github.com/{name}/{repname}"
     year = request.form.get('year', None)
-    ret = commit.apply_async((name, email, repurl, repname, a,
-                 int(request.form['nc']), year))
+    dates = getBulkDates(a, int(request.form['nc']), year)
+    ret = commit.apply_async((name, email, repurl, repname, dates))
     task = commit.AsyncResult(ret.id)
     if task.result == -1:
         return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
@@ -163,13 +163,10 @@ def apply(username):
         {"name": request.json['repo'], "description": "A repo for GitHub graffiti"})
     requests.post('https://api.github.com/user/repos',
                     headers=headers, data=data)
-    ids = []
-    for (name, email, auth, repo, a, nc, year) in get_old(username, request.json['repo']):
-        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
-        ids.append(ret.id)
-    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
-    ids.append(ret.id)
-    return {"taskid": ids}
+    dates = [getBulkDates(a, nc, year) for (name, email, auth, repo, a, nc, year) in get_old(username, request.json['repo'])]
+    dates += getBulkDates(a, int(request.json['nc']), None)
+    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], dates))
+    return {"taskid": ret.id}
 
 
 @app.route('/users/<username>/<alias>/', methods=['POST'])
@@ -244,7 +241,6 @@ def unauth():
 @app.route('/refresh/')
 def refresh():
     everything = get_everything()
-    total = len(everything)
     for name, email, auth, repo, a, nc, year in everything:
         auth = fernet.decrypt(auth.encode()).decode()
         headers = {
@@ -258,11 +254,9 @@ def refresh():
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
         oldies = get_old(name, repo)
-        total += len(oldies)
-        for (name, email, auth, repo, a, nc, year) in oldies:
-            ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
-        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
-    return f"{total} graffitis... I can prolly do this ;)"
+        dates = [getBulkDates(a, nc, year) for (name, email, auth, repo, a, nc, year) in oldies]
+        ret = commit.apply_async((name, email, repurl, repo, dates))
+    return f"{len(dates)} commits... On it ;)"
 
 
 # @app.route('/refstatus/<taskid>/')

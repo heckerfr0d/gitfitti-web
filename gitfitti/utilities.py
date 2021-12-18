@@ -27,23 +27,27 @@ def getDates(year=None):
     return dates
 
 
-def getActiveDates(dates, a):
+def getActiveDates(dates, a, nc):
     ad = []
     for j in range(52):
         for i in range(7):
-            for k in range(a[i][j]):
+            for k in range(nc*a[i][j]):
                 ad.append(dates[i][j]+datetime.timedelta(seconds=k))
     return ad
 
 
-@celery.task(bind=True)
-def commit(self, name, email, url, repname, a, nc, year=None):
+def getBulkDates(a, nc, year=None):
     if year:
-        dates = getActiveDates(getDates(int(year)), a)
+        dates = getActiveDates(getDates(int(year)), a, nc)
     else:
-        dates = getActiveDates(getDates(), a)
+        dates = getActiveDates(getDates(), a, nc)
+    return dates
+
+
+@celery.task(bind=True)
+def commit(self, name, email, url, repname, dates):
     author = git.Actor(name, email)
-    total = nc*len(dates)
+    total = len(dates)
     i = 0
     if not os.path.isdir(repname):
         try:
@@ -53,10 +57,9 @@ def commit(self, name, email, url, repname, a, nc, year=None):
             'result': -1}
     rep = git.Repo.init(repname)
     for date in dates:
-        for n in range(nc):
-            rep.index.commit("made with love by gitfitti", author=author,
-                             committer=author, author_date=date.isoformat())
-        i += nc
+        rep.index.commit("made with love by gitfitti", author=author,
+                            committer=author, author_date=date.isoformat())
+        i += 1
         self.update_state(state='PROGRESS',
                           meta={'current': i,
                                 'total': total,

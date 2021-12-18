@@ -128,17 +128,14 @@
                 var progressbar = form.querySelector('span[id="progressbar"]');
                 var progresslabel = form.querySelector('span[id="progresslabel"]');
                 var tid = data['taskid'];
-                var id=0;
                 var interval = setInterval(function() {
-                    fetch('/status/'+tid[id], {
+                    fetch('/status/'+tid, {
                         method: 'GET'
                     }).then(function(response) {
                         return response.json();
                     }).then(function(data) {
                         if (data['state']=='SUCCESS') {
-                            id++;
-                            if (id == tid.length)
-                                clearInterval(interval);
+                            clearInterval(interval);
                             progress.style.display = 'none';
                             message = document.getElementById('res');
                             message.innerHTML = 'Created ' + data['total'] + ' commits in ' + repo + '.';
