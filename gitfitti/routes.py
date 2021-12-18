@@ -42,6 +42,13 @@ def main():
 @app.route('/status/<taskid>')
 def status(taskid):
     task = commit.AsyncResult(taskid)
+    if task.state == 'PENDING':
+        return {
+            'state': task.state,
+            'current': 0,
+            'total': 1,
+            'status': 'Pending...'
+        }
     return {'state': task.state, 'current': task.info.get('current'), 'total': task.info.get('total'), 'status': task.info.get('status')}
 
 

@@ -128,7 +128,8 @@
                 var progressbar = form.querySelector('span[id="progressbar"]');
                 var progresslabel = form.querySelector('span[id="progresslabel"]');
                 var tid = data['taskid'];
-                for (var id in tid) {
+                var id=0;
+                while(id<tid.length) {
                     var interval = setInterval(function() {
                         fetch('/status/'+tid[id], {
                             method: 'GET'
@@ -140,6 +141,7 @@
                                 progress.style.display = 'none';
                                 message = document.getElementById('res');
                                 message.innerHTML = 'All done! Created ' + data['total'] + ' commits in ' + repo + '.';
+                                id++;
                             }
                             else {
                                 i = data['current'];
@@ -149,7 +151,7 @@
                                 progress.style.display = 'block';
                             }
                         });
-                    }, 1000);
+                    }, 2000);
                 }
             }
         });
