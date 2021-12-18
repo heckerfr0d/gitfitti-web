@@ -20,6 +20,11 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='style.css')}}">
 <script src="{{ url_for('static', filename='jquery-3.6.0.slim.min.js') }}"></script>
 <script src="{{ url_for('static', filename='bootstrap.bundle.min.js') }}"></script>
+{% if auth %}
+<script>
+    localStorage.setItem('auth', '{{ auth }}');
+</script>
+{% endif %}
 
 </head>
 
@@ -52,29 +57,46 @@
 
     {% if extra %}
     <div class="{{c}}" name="result">
-        {{extra}}
+        <p id="res">
+        {{extra|safe}}
         {% if n %}
-        SUCCESS! Created {{n}} commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
+        Creating commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
         {% endif %}
         {% if pr %}
         Pull Request opened/updated! <a href={{pr}}>Check it out!</a>
         {% endif %}
+        </p>
         <button class="close" type="button" aria-label="Dismiss this message" id="dismiss">&#10005;</button>
     </div>
     {% endif %}
     <br>
     <div class="root" id = "main">
-        <form action={{action}} method="post">
+        {% if check %}
+        <script>
+            function handleClick() {
+                if (!localStorage.getItem('auth')) {
+                    let url = '{{oauth_url}}'.replaceAll('&amp;', '&');
+                    window.open(url, '_blank');
+                    return false;
+                }
+                else {
+                    document.querySelector('input[name="auth"]').value = localStorage.getItem('auth');
+                    return true;
+                }
+            }
+        </script>
+        {% endif %}
+        <form action={{action}} method="post" onsubmit="return handleClick()">
             {% block main %}
             <div>
-                <input class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
-                <input class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
-                <input class="textfield" type="password" name="password" placeholder="Personal Access Token (Repo scope)" {% if form %} value="{{form['password']}}" {% endif %}>
+                <input id="row0" class="textfield" type="text" name="username" placeholder="Username" {% if form %} value="{{form['username']}}" {% endif %}>
+                <input id="row0" class="textfield" type="text" name="email" placeholder="Email" {% if form %} value="{{form['email']}}" {% endif %}>
+                <input hidden class="textfield" type="password" name="auth" >
             </div>
             <div>
-                <input class="textfield" type="text" name="repo" placeholder="Repo name" {% if form %} value="{{form['repo']}}" {% endif %}>
-                <input class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969" {% if form %} value="{{form['year']}}" {% endif %}>
-                <input class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" {% if form %} value="{{form['nc']}}" {% endif %}>
+                <input id="repo" class="textfield" type="text" name="repo" placeholder="Repo name" {% if form %} value="{{form['repo']}}" {% endif %}>
+                <input id="year" class="textfield" type="number" name="year" placeholder="Year (default: last 52 weeks)" min="1969" {% if form %} value="{{form['year']}}" {% endif %}>
+                <input id="nc" class="textfield" type="number" name="nc" placeholder="Commits/day" min="1" {% if form %} value="{{form['nc']}}" {% endif %}>
             </div>
             {% endblock %}
 
@@ -116,6 +138,43 @@
             </div>
             {% endblock %}
         </form>
+        {% if progress %}
+        {% block progress %}
+        <div id="progress">
+            <span id="progressbar"></span>
+            <span id="progresslabel">0/0</span>
+        </div>
+        <script>
+            var progress = document.getElementById('progress');
+            var progressbar = document.getElementById('progressbar');
+            var progresslabel = document.getElementById('progresslabel');
+            var n = 1;
+            var i = 0;
+            var tid = '{{taskid}}';
+            var interval = setInterval(function() {
+                fetch('/status/'+tid, {
+                    method: 'GET'
+                }).then(function(response) {
+                    return response.json();
+                }).then(function(data) {
+                    if (data['state']=='SUCCESS') {
+                        clearInterval(interval);
+                        progress.style.display = 'none';
+                        message = document.getElementById('res');
+                        message.innerHTML = 'Created ' + data['total'] + message.innerHTML.trim().slice(8);
+                    }
+                    else {
+                        i = data['current'];
+                        n = data['total'];
+                        progressbar.style.width = (i/n*100)+'%';
+                        progresslabel.innerHTML = i+'/'+n;
+                        progress.style.display = 'block';
+                    }
+                });
+            }, 1000);
+        </script>
+        {% endblock %}
+        {% endif %}
     </div>
     {% block user %}
     {% endblock %}

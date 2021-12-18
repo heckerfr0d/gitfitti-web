@@ -1,4 +1,4 @@
-from flask.helpers import url_for
+from . import celery
 import git
 import datetime
 import os
@@ -29,29 +29,38 @@ def getDates(year=None):
 
 def getActiveDates(dates, a):
     ad = []
-    for i in range(7):
-        for j in range(52):
+    for j in range(52):
+        for i in range(7):
             for k in range(a[i][j]):
-                ad.append(dates[i][j])
+                ad.append(dates[i][j]+datetime.timedelta(seconds=k))
     return ad
 
 
-def commit(name, email, url, repname, a, nc, year=None):
+@celery.task(bind=True)
+def commit(self, name, email, url, repname, a, nc, year=None):
     if year:
         dates = getActiveDates(getDates(int(year)), a)
     else:
         dates = getActiveDates(getDates(), a)
     author = git.Actor(name, email)
+    total = nc*len(dates)
+    i = 0
     if not os.path.isdir(repname):
         try:
             git.cmd.Git().clone(url)
         except:
-            return -1
+            return {'current': i, 'total': total, 'status': "Clone Failed!",
+            'result': -1}
     rep = git.Repo.init(repname)
     for date in dates:
         for n in range(nc):
             rep.index.commit("made with love by gitfitti", author=author,
                              committer=author, author_date=date.isoformat())
+        i += nc
+        self.update_state(state='PROGRESS',
+                          meta={'current': i,
+                                'total': total,
+                                'status': 'Committing...'})
     try:
         rep.remotes.origin.set_url(url)
     except:
@@ -61,8 +70,10 @@ def commit(name, email, url, repname, a, nc, year=None):
         shutil.rmtree(repname)
     except:
         shutil.rmtree(repname)
-        return -2
-    return nc*len(dates)
+        return {'current': i, 'total': total, 'status': "Push Failed!",
+            'result': -2}
+    return {'current': i, 'total': total, 'status': 'All done!',
+            'result': i}
 
 
 def editJS(alias, a):
@@ -123,24 +134,4 @@ def openPR(name, alias, auth):
     PR = requests.post("https://api.github.com/repos/heckerfr0d/gitfitti-web/pulls",
                        data=message, headers=headers).json()
     return PR['html_url']
-
-
-def merge(n, cont):
-    git.cmd.Git().clone(
-        f"https://heckerfr0d:{TOKEN}@github.com/heckerfr0d/gitfitti-web")
-    repo = git.Repo.init('gitfitti-web')
-    with open('gitfitti/static/script.js', 'rb') as fin:
-        with open('gitfitti-web/gitfitti/static/script.js', 'wb') as fout:
-            shutil.copyfileobj(fin, fout)
-    repo.git.add(update=True)
-    author = git.Actor('heckerfr0d', 'hadif_b190513cs@nitc.ac.in')
-    thanks = ""
-    if cont:
-        thanks = '@'+', @'.join(cont)
-    repo.index.commit(
-        f'Merging {n} public contributions\n Thanks {thanks} :heart:', author=author)
-    origin = repo.remote(name='origin')
-    origin.push()
-    shutil.rmtree('gitfitti-web')
-    return thanks
 

@@ -34,6 +34,8 @@
     --c2: #39d353;
     --c1h: #0e4429;
     --c2h: #26a641;
+    --auth-bg: #238636;
+    --auth-bg-hover: #2ea043;
 }
 
 
@@ -73,7 +75,8 @@
     --c2: #216e39;
     --c1h: #9be9a8;
     --c2h: #30a14e;
-
+    --auth-bg: #2da44e;
+    --auth-bg-hover: #2c974b;
 }
 
 @media only screen and (max-width: 450px) 
@@ -308,7 +311,7 @@ input:focus {
 
 .user {
     margin-top: 10px;
-    width: 49.6%;
+    width: 32.95%;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -448,3 +451,38 @@ svg {
     text-decoration: none;
 }
 
+.auth {
+    background-color: var(--auth-bg)!important;
+    padding: 5px 16px;
+    font-size: 14px;
+    border-radius: 6px;
+    width: 100%;
+}
+
+.auth:hover {
+    background-color: var(--auth-bg-hover)!important;
+}
+
+#row0 {
+    width: 49.5%;
+}
+
+#progress {
+    margin: 10px 0px 0px 0px;
+    display: none;
+}
+
+#progressbar {
+    display: inline-block;
+    background-color: var(--c2);
+    border: solid 1px transparent;
+    border-radius: 6px;
+    padding: 3px;
+    width: 0%;
+}
+
+#progresslabel {
+    color: var(--body-color);
+    font-size: 12px;
+    margin-left: 5px;
+}

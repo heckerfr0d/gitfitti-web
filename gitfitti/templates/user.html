@@ -10,7 +10,7 @@
     <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1">
 </div>
 <div>
-    <input type="submit" class="do" value="Add it to the List!">
+    <input type="button" class="do" onclick="add()" value="Add it to the List!">
 </div>
 <div>
     <input type="button" class="do" onclick="showList()"  value="Edit the List" style="margin-top: 1px;">
@@ -59,9 +59,14 @@
         <input type="text" class="rep" name="repo" placeholder="Repo name" value={{repo}}>
         <input class="textfield num" type="number" name="nc" placeholder="Commits/day" min="1" value={{nc}}>
     </div>
-        <input type="submit" class="user" value="Modify">
-        {% set act = "/users/"+username+"/delete/"+alias %}
-        <input type="button" class="user" value="Delete" onclick="window.location.href='{{act}}'">
+    <input type="button" class="user" value="Update" onclick="update('{{alias|safe}}')">
+    <input type="button" class="user" value="Apply Now" onclick="apply('{{alias|safe}}')">
+    {% set act = "/users/"+username+"/delete/"+alias %}
+    <input type="button" class="user" value="Delete" onclick="delet('{{alias|safe}}')">
+    <div id="progress">
+        <span id="progressbar"></span>
+        <span id="progresslabel">0/0</span>
+    </div>
 </form>
 </div>
 <hr>
@@ -80,6 +85,159 @@
     function hideList() {
         $('#list').hide();
         $('#main').show();
+    }
+
+    function apply(alias) {
+        var username = '{{username}}';
+        var a = Array.from(Array(7), () => new Array(52));
+        var act = '/users/'+username+'/'+alias;
+        var form = document.querySelector('form[action="'+act+'"]');
+        alias = form.querySelector('input[name="alias"]').value;
+        var repo = form.querySelector('input[name="repo"]').value;
+        var nc = form.querySelector('input[name="nc"]').value;
+        for (var i=0; i<7; i++) {
+            for (var j=0; j<52; j++) {
+                a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
+            }
+        }
+        fetch('/users/'+username+'/apply', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                repo: repo,
+                a: a,
+                nc: nc
+            })
+        }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            if ('taskid' in data) {
+                var act = '/users/'+username+'/'+alias;
+                var form = document.querySelector('form[action="'+act+'"]');
+                var progress = form.querySelector('div[id="progress"]');
+                var progressbar = form.querySelector('span[id="progressbar"]');
+                var progresslabel = form.querySelector('span[id="progresslabel"]');
+                var n = 1;
+                var i = 0;
+                var tid = data['taskid'];
+                var interval = setInterval(function() {
+                    fetch('/status/'+tid, {
+                        method: 'GET'
+                    }).then(function(response) {
+                        return response.json();
+                    }).then(function(data) {
+                        if (data['state']=='SUCCESS') {
+                            clearInterval(interval);
+                            progress.style.display = 'none';
+                            message = document.getElementById('res');
+                            message.innerHTML = 'All done! Created ' + data['total'] + ' commits in ' + repo + '.';
+                        }
+                        else {
+                            i = data['current'];
+                            n = data['total'];
+                            progressbar.style.width = (i/n*100)+'%';
+                            progresslabel.innerHTML = i+'/'+n;
+                            progress.style.display = 'block';
+                        }
+                    });
+                }, 1000);
+            }
+        });
+    }
+
+    function add() {
+        var username = '{{username}}';
+        var a = Array.from(Array(7), () => new Array(52));
+        var act = '/users/'+username+'/add/';
+        var form = document.querySelector('form[action="'+act+'"]');
+        alias = form.querySelector('input[name="alias"]').value;
+        var repo = form.querySelector('input[name="repo"]').value;
+        var nc = form.querySelector('input[name="nc"]').value;
+        for (var i=0; i<7; i++) {
+            for (var j=0; j<52; j++) {
+                a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
+            }
+        }
+        fetch(act, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                alias: alias,
+                repo: repo,
+                a: a,
+                nc: nc
+            })
+        }).then(function(response) {
+            if (response.status == 200) {
+                message = document.getElementById('res');
+                message.innerHTML = 'Added ' + alias + '.';
+            }
+            else {
+                message = document.getElementById('res');
+                message.innerHTML = 'Error adding ' + alias + '.';
+            }
+        });
+    }
+
+    function update(alias) {
+        var username = '{{username}}';
+        var a = Array.from(Array(7), () => new Array(52));
+        var act = '/users/'+username+'/'+alias;
+        var form = document.querySelector('form[action="'+act+'"]');
+        alias = form.querySelector('input[name="alias"]').value;
+        var repo = form.querySelector('input[name="repo"]').value;
+        var nc = form.querySelector('input[name="nc"]').value;
+        for (var i=0; i<7; i++) {
+            for (var j=0; j<52; j++) {
+                a[i][j] = Number(form.querySelector('input[name="'+i+' '+j+'"]:checked').value);
+            }
+        }
+        fetch(act, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                alias: alias,
+                repo: repo,
+                a: a,
+                nc: nc
+            })
+        }).then(function(response) {
+            if (response.status == 200) {
+                message = document.getElementById('res');
+                message.innerHTML = 'Updated ' + alias + '.';
+            }
+            else {
+                message = document.getElementById('res');
+                message.innerHTML = 'Error updating ' + alias + '.';
+            }
+        });
+    }
+
+    function delet(alias) {
+        var username = '{{username}}';
+        var act = '/users/'+username+'/'+alias;
+        document.querySelector('form[action="'+act+'"]').style.display = 'none';
+        fetch('/users/'+username+'/delete/'+alias, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(function(response) {
+            if (response.status == 200) {
+                message = document.getElementById('res');
+                message.innerHTML = 'Deleted ' + alias + '.';
+            }
+            else {
+                message = document.getElementById('res');
+                message.innerHTML = 'Error deleting ' + alias + '.';
+            }
+        });
     }
 </script>
 {% endblock %}
