@@ -158,9 +158,9 @@ def apply(username):
                     headers=headers, data=data)
     ids = []
     for (name, email, auth, repo, a, nc, year) in get_old(username):
-        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+        ret = commit.apply((name, email, repurl, repo, a, nc, year))
         ids.append(ret.id)
-    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
+    ret = commit.apply((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
     ids.append(ret.id)
     return {"taskid": ids}
 
@@ -250,8 +250,8 @@ def refresh():
         oldies = get_old(name)
         total += len(oldies)
         for (name, email, auth, repo, a, nc, year) in oldies:
-            ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
-        ret = commit.apply_async((name, email, repurl, repo, a, nc, year))
+            ret = commit.apply((name, email, repurl, repo, a, nc, year))
+        ret = commit.apply((name, email, repurl, repo, a, nc, year))
     return f"{total} graffitis... I can prolly do this ;)"
 
 
