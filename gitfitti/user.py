@@ -58,7 +58,7 @@ def update_auth(username, auth):
 
 def get_user_graffiti(username):
     cur = conn.cursor()
-    cur.execute("SELECT alias, repo, a, nc, year FROM graffiti WHERE name = %s", (username,))
+    cur.execute("SELECT alias, repo, a, nc, year FROM graffiti WHERE name = %s ORDER BY year DESC", (username,))
     graffiti = cur.fetchall()
     cur.close()
     return graffiti
@@ -94,7 +94,7 @@ def delete_user(username):
 
 def get_old(username, repo):
     cur = conn.cursor()
-    cur.execute("SELECT u.name, u.email, u.auth, g.repo, g.a, g.nc, g.year FROM users u, graffiti g WHERE u.name = g.name AND g.year IS NOT NULL AND u.name = %s AND g.repo = %s", (username, repo))
+    cur.execute("SELECT u.name, u.email, u.auth, g.repo, g.a, g.nc, g.year FROM users u, graffiti g WHERE u.name = g.name AND g.year IS NOT NULL AND u.name = %s AND g.repo = %s ORDER BY g.year", (username, repo))
     oldies = cur.fetchall()
     cur.close()
     return oldies
