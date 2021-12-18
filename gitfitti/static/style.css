@@ -311,7 +311,7 @@ input:focus {
 
 .user {
     margin-top: 10px;
-    width: 49.6%;
+    width: 32.95%;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -464,14 +464,15 @@ svg {
 }
 
 #row0 {
-    width: 49.2%;
+    width: 49.5%;
 }
 
-.progress {
+#progress {
     margin: 10px 0px 0px 0px;
+    display: none;
 }
 
-.progressbar {
+#progressbar {
     display: inline-block;
     background-color: var(--c2);
     border: solid 1px transparent;
@@ -480,7 +481,7 @@ svg {
     width: 0%;
 }
 
-.progresslabel {
+#progresslabel {
     color: var(--body-color);
     font-size: 12px;
     margin-left: 5px;

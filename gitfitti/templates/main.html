@@ -58,7 +58,7 @@
     {% if extra %}
     <div class="{{c}}" name="result">
         <p id="res">
-        {{extra}}
+        {{extra|safe}}
         {% if n %}
         Creating commits as <a href={{profile}}>@{{name}}</a> in <a href={{repo}}>{{repname}}</a>
         {% endif %}
@@ -140,9 +140,9 @@
         </form>
         {% if progress %}
         {% block progress %}
-        <div class="progress" id="progress">
-            <span class="progressbar" id="progressbar"></span>
-            <span class="progresslabel" id="progresslabel">0/0</span>
+        <div id="progress">
+            <span id="progressbar"></span>
+            <span id="progresslabel">0/0</span>
         </div>
         <script>
             var progress = document.getElementById('progress');
@@ -163,12 +163,15 @@
                         message = document.getElementById('res');
                         message.innerHTML = 'Created ' + data['total'] + message.innerHTML.trim().slice(8);
                     }
-                    i = data['current'];
-                    n = data['total'];
-                    progressbar.style.width = (i/n*100)+'%';
-                    progresslabel.innerHTML = i+'/'+n;
+                    else {
+                        i = data['current'];
+                        n = data['total'];
+                        progressbar.style.width = (i/n*100)+'%';
+                        progresslabel.innerHTML = i+'/'+n;
+                        progress.style.display = 'block';
+                    }
                 });
-            }, 2000);
+            }, 1000);
         </script>
         {% endblock %}
         {% endif %}

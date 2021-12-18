@@ -7,6 +7,7 @@ DATABASE_URL = current_app.config['DATABASE_URL']
 conn = connect(DATABASE_URL, sslmode='require')
 # conn = connect(dbname='gitfitti')
 
+
 class User:
     def __init__(self, name, password, email, auth):
         self.name = name
@@ -69,9 +70,9 @@ def add_graffiti(username, alias, repo, a, nc):
     cur.close()
     return get_user_graffiti(username)
 
-def update_graffiti(username, alias, repo, a, nc):
+def update_graffiti(username, oldalias, newalias, repo, a, nc):
     cur = conn.cursor()
-    cur.execute("UPDATE graffiti SET alias = %s, repo = %s, a = %s, nc = %s WHERE name = %s AND alias = %s", (alias, repo, a, nc, username, alias))
+    cur.execute("UPDATE graffiti SET alias = %s, repo = %s, a = %s, nc = %s WHERE name = %s AND alias = %s", (newalias, repo, a, nc, username, oldalias))
     conn.commit()
     cur.close()
     return get_user_graffiti(username)

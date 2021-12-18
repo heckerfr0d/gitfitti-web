@@ -18,7 +18,8 @@ oauth_url = f"https://github.com/login/oauth/authorize?client_id={CLIENT_ID}"
 def main():
     redirect_uri = url_for('redir', target='done', _external=True)
     if request.method == 'GET':
-        return render_template('main.html', page='Home', action="/", oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
+        message = "Welcome to Gitfitti!<br/>Simply fill in your details and draw whatever you want and we'll make it show on your GitHub profile.<br/>If this is your first time, you will have to authorize us to access your GitHub account.<br/>That's it, go wild! ;)"
+        return render_template('main.html', page='Home', action="/", c="message", extra=message, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
 
     a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
 
@@ -138,16 +139,27 @@ def add(username):
     return render_template('user.html', page=username, action=f"/users/{username}/add/", c="message", extra=f"Added '{request.form['alias']}' to the list!", username=username, rows=rows)
 
 
+@app.route('/users/<username>/apply/', methods=['POST'])
+@login_required
+def apply(username):
+    if current_user.get_id() != username:
+        logout_user()
+        return redirect(url_for('login', ret=403))
+    a = request.json['a']
+    repurl = f"https://{username}:{current_user.auth}@github.com/{username}/{request.json['repo']}"
+    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], a, int(request.json['nc']), None))
+    return {"taskid": ret.id}
+
+
 @app.route('/users/<username>/<alias>/', methods=['POST'])
 @login_required
 def modify(username, alias):
     if current_user.get_id() != username:
         logout_user()
         return redirect(url_for('login', ret=403))
-    cursor = conn.cursor()
-    a = [[int(request.form[f'{i} {j}']) for j in range(52)] for i in range(7)]
-    rows = update_graffiti(username, alias, request.form['repo'], a, request.form['nc'])
-    return render_template('user.html', page=username, action=f"/users/{username}/add/", c="message", extra="List Updated!", username=username, rows=rows)
+    a = request.json['a']
+    rows = update_graffiti(username, alias, request.json['alias'], request.json['repo'], a, request.json['nc'])
+    return "sett", 200
 
 
 @app.route('/users/<username>/delete/<alias>/', methods=['GET', 'POST'])
