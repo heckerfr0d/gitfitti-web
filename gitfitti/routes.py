@@ -210,34 +210,11 @@ def unauth():
     return redirect(url_for('login', ret=403))
 
 
-# @celery.task(bind=True)
-# def massCommit(self, everything):
-#     i = 0
-#     total = len(everything)
-#     for name, email, auth, repo, a, nc in everything:
-#         auth = fernet.decrypt(auth.encode()).decode()
-#         headers = {
-#             'Authorization': 'token '+auth
-#         }
-#         repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
-#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Deleting {name}\'s {repo}'})
-#         requests.delete(
-#             f'https://api.github.com/repos/{name}/{repo}', headers=headers)
-#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Creating {repo} for {name}'})
-#         data = json.dumps(
-#             {"name": repo, "description": "A repo for GitHub graffiti"})
-#         requests.post('https://api.github.com/user/repos',
-#                         headers=headers, data=data)
-#         ret = commit.apply_async((name, email, repurl, repo, a, nc))
-#         self.update_state(state='PROGRESS', meta={'current': i, 'total': total, 'name':name, 'status': f'Creating commits in {repo}', 'target': ret.id})
-#         i += 1
-#     return {'current': total, 'total': total, 'status': 'Complete!', 'result': 'Success!'}
-
-
 @app.route('/refresh/')
 def refresh():
     everything = get_everything()
     total = 0
+    rets = []
     for name, email, auth, repo, a, nc, year in everything:
         auth = fernet.decrypt(auth.encode()).decode()
         repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
@@ -247,22 +224,9 @@ def refresh():
         dates += getActiveDates(a, nc, None)
         total += len(dates)
         ret = commit.apply_async((name, email, auth, repurl, repo, dates, True))
-    return f"{total} commits... On it ;)"
+        rets.append((ret.id, name))
+    return render_template('refresh.html', c="message", extra=" ", rets=rets, progress=True)
 
-
-# @app.route('/refstatus/<taskid>/')
-# def refstatus(taskid):
-#     task = celery.AsyncResult(taskid)
-#     response = {
-#         'state': task.state,
-#         'current': task.info.get('current', 0),
-#         'total': task.info.get('total', 1),
-#         'name': task.info.get('name', ''),
-#         'status': task.info.get('status', '')
-#     }
-#     if 'target' in task.info:
-#         response['target'] = task.info['target']
-#     return response
 
 
 @app.errorhandler(404)

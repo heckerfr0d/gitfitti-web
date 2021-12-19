@@ -1,0 +1,61 @@
+{% extends "main.html" %}
+{% block main %}
+{% endblock %}
+
+{% block graph %}
+{% endblock %}
+
+{% block submit %}
+{% endblock %}
+
+{% block progress %}
+<script>
+    let main = document.getElementById('main');
+    main.style.width = '69%';
+    var total = 0;
+    var repos = 0;
+    var message = document.getElementById('res');
+</script>
+{% for taskid, name in rets %}
+<p id="user" name={{name}}>
+    {{name}}:
+</p>
+<div id="progress" name={{name}}>
+    <span id="progressbar" name={{name}}></span>
+    <span id="progresslabel" name={{name}}>0/0</span>
+</div>
+<script>
+    {
+        const uname = '{{name}}';
+        const progress = document.querySelector('div[id="progress"][name="'+uname+'"]');
+        const progressbar = document.querySelector('span[id="progressbar"][name="'+uname+'"]');
+        const progresslabel = document.querySelector('span[id="progresslabel"][name="'+uname+'"]');
+        const user = document.querySelector('p[id="user"][name="'+uname+'"]');
+        progress.style.display = 'block';
+        const tid = '{{taskid}}';
+        const interval = setInterval(function() {
+            fetch('/status/'+tid, {
+                method: 'GET'
+            }).then(function(response) {
+                return response.json();
+            }).then(function(data) {
+                if (data['state']=='SUCCESS') {
+                    user.innerHTML = uname + ': ' + data['status'];
+                    total += data['total'];
+                    repos++;
+                    message.innerHTML = 'Created ' + total + ' commits across ' + repos + ' repos.';
+                    clearInterval(interval);
+                }
+                else {
+                    let i = data['current'];
+                    let n = data['total'];
+                    progressbar.style.width = (i/n*100)+'%';
+                    progresslabel.innerHTML = i+'/'+n;
+                    user.innerHTML = uname + ': ' + data['status'];
+                }
+            });
+        }, 1000);
+    }
+</script>
+{% endfor %}
+{% endblock %}
