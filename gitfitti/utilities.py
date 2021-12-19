@@ -90,7 +90,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
     except:
         rep.create_remote('origin', url)
     try:
-        rep.remotes.origin.push(refspec="master:master", force=True)
+        rep.remotes.origin.push(refspec="master:main", force=True)
         shutil.rmtree(name)
     except:
         shutil.rmtree(name)
