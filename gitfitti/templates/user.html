@@ -127,6 +127,7 @@
                 var progress = form.querySelector('div[id="progress"]');
                 var progressbar = form.querySelector('span[id="progressbar"]');
                 var progresslabel = form.querySelector('span[id="progresslabel"]');
+                var message = document.getElementById('res');
                 var tid = data['taskid'];
                 var interval = setInterval(function() {
                     fetch('/status/'+tid, {
@@ -137,12 +138,12 @@
                         if (data['state']=='SUCCESS') {
                             clearInterval(interval);
                             progress.style.display = 'none';
-                            message = document.getElementById('res');
                             message.innerHTML = 'Created ' + data['total'] + ' commits in ' + repo + '.';
                         }
                         else {
                             i = data['current'];
                             n = data['total'];
+                            message.innerHTML = data['status'];
                             progressbar.style.width = (i/n*100)+'%';
                             progresslabel.innerHTML = i+'/'+n;
                             progress.style.display = 'block';
@@ -183,6 +184,8 @@
             if (response.status == 200) {
                 message = document.getElementById('res');
                 message.innerHTML = 'Added ' + alias + '.';
+                alert('Added ' + alias + '.');
+                location.reload();
             }
             else {
                 message = document.getElementById('res');

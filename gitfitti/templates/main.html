@@ -148,6 +148,7 @@
             var progress = document.getElementById('progress');
             var progressbar = document.getElementById('progressbar');
             var progresslabel = document.getElementById('progresslabel');
+            var message = document.getElementById('res');
             var n = 1;
             var i = 0;
             var tid = '{{taskid}}';
@@ -160,12 +161,12 @@
                     if (data['state']=='SUCCESS') {
                         clearInterval(interval);
                         progress.style.display = 'none';
-                        message = document.getElementById('res');
                         message.innerHTML = 'Created ' + data['total'] + message.innerHTML.trim().slice(8);
                     }
                     else {
                         i = data['current'];
                         n = data['total'];
+                        message.innerHTML = data['status'];
                         progressbar.style.width = (i/n*100)+'%';
                         progresslabel.innerHTML = i+'/'+n;
                         progress.style.display = 'block';

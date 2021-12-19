@@ -29,8 +29,8 @@ def main():
     auth = request.form['auth']
     repurl = f"https://{name}:{auth}@github.com/{name}/{repname}"
     year = request.form.get('year', None)
-    dates = getBulkDates(a, int(request.form['nc']), year)
-    ret = commit.apply_async((name, email, repurl, repname, dates))
+    dates = getActiveDates(a, request.form['nc'], year)
+    ret = commit.apply_async((name, email, auth, repurl, repname, dates))
     task = commit.AsyncResult(ret.id)
     if task.result == -1:
         return render_template('main.html', page='Home', action="/", c="message warn", extra="ERROR! Could not clone the repo. Ensure that the remote repo exists and that you have access to it.", form=request.form, oauth_url=f'{oauth_url}&redirect_uri={redirect_uri}&scope=repo', check=True)
@@ -155,22 +155,13 @@ def apply(username):
     if current_user.get_id() != username:
         logout_user()
         return redirect(url_for('login', ret=403))
-    headers = {
-        'Authorization': 'token '+current_user.auth
-    }
     repurl = f"https://{username}:{current_user.auth}@github.com/{username}/{request.json['repo']}"
-    requests.delete(
-        f'https://api.github.com/repos/{username}/{request.json["repo"]}', headers=headers)
-    data = json.dumps(
-        {"name": request.json['repo'], "description": "A repo for GitHub graffiti"})
-    requests.post('https://api.github.com/user/repos',
-                    headers=headers, data=data)
     dates = []
     for (a, nc, year) in get_old(username, request.json['repo']):
-        dates += getBulkDates(a, nc, year)
+        dates += getActiveDates(a, nc, year)
     a = request.json['a']
-    dates += getBulkDates(a, int(request.json['nc']), None)
-    ret = commit.apply_async((username, current_user.email, repurl, request.json['repo'], dates))
+    dates += getActiveDates(a, request.json['nc'], None)
+    ret = commit.apply_async((username, current_user.email, current_user.auth, repurl, request.json['repo'], dates, True))
     return {"taskid": ret.id}
 
 
@@ -248,21 +239,12 @@ def refresh():
     everything = get_everything()
     for name, email, auth, repo, a, nc, year in everything:
         auth = fernet.decrypt(auth.encode()).decode()
-        headers = {
-            'Authorization': 'token '+auth
-        }
         repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
-        requests.delete(
-            f'https://api.github.com/repos/{name}/{repo}', headers=headers)
-        data = json.dumps(
-            {"name": repo, "description": "A repo for GitHub graffiti"})
-        requests.post('https://api.github.com/user/repos',
-                        headers=headers, data=data)
         dates = []
         for (ao, nco, year) in get_old(name, repo):
-            dates += getBulkDates(ao, nco, year)
-        dates += getBulkDates(a, nc, None)
-        ret = commit.apply_async((name, email, repurl, repo, dates))
+            dates += getActiveDates(ao, nco, year)
+        dates += getActiveDates(a, nc, None)
+        ret = commit.apply_async((name, email, auth, repurl, repo, dates, True))
     return f"{len(dates)} commits... On it ;)"
 
 

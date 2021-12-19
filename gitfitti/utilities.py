@@ -27,52 +27,73 @@ def getDates(year=None):
     return dates
 
 
-def getActiveDates(dates, a, nc):
+def getActiveDates(a, nc, year=None):
     ad = []
+    if year:
+        dates = getDates(int(year))
+    else:
+        dates = getDates()
     for j in range(52):
         for i in range(7):
-            for k in range(nc*a[i][j]):
-                ad.append((dates[i][j]+datetime.timedelta(seconds=k)).isoformat())
+            ad += [dates[i][j].isoformat()]*(a[i][j]*nc)
     return ad
 
 
-def getBulkDates(a, nc, year=None):
-    if year:
-        dates = getActiveDates(getDates(int(year)), a, nc)
-    else:
-        dates = getActiveDates(getDates(), a, nc)
-    return dates
-
 
 @celery.task(bind=True)
-def commit(self, name, email, url, repname, dates):
+def commit(self, name, email, auth, url, repname, dates, deleterep=False):
     author = git.Actor(name, email)
     total = len(dates)
     i = 0
-    if not os.path.isdir(repname):
-        try:
-            git.cmd.Git().clone(url)
-        except:
-            return {'current': i, 'total': total, 'status': "Clone Failed!",
-            'result': -1}
-    rep = git.Repo.init(repname)
+    os.mkdir(name)
+    try:
+        self.update_state(state='PROGRESS',
+                          meta={'current': i,
+                                'total': total,
+                                'status': 'Cloning repo...'})
+        git.cmd.Git(name).clone(url)
+    except:
+        shutil.rmtree(name)
+        return {'current': i, 'total': total, 'status': "Clone Failed!",
+        'result': -1}
+    if deleterep:
+        self.update_state(state='PROGRESS',
+                          meta={'current': i,
+                                'total': total,
+                                'status': 'Recreating repo...'})
+        headers = {
+            'Authorization': 'token '+auth
+        }
+        requests.delete(
+            f'https://api.github.com/repos/{name}/{repname}', headers=headers)
+        data = json.dumps(
+            {"name": repname, "description": "A repo for GitHub graffiti"})
+        requests.post('https://api.github.com/user/repos',
+                        headers=headers, data=data)
+        shutil.rmtree(os.path.join(name, repname, '.git'))
+    rep = git.Repo.init(os.path.join(name, repname))
+    rep.git.add(all=True)
     for date in dates:
-        rep.index.commit("made with love by gitfitti", author=author,
-                            committer=author, author_date=date)
-        i += 1
         self.update_state(state='PROGRESS',
                           meta={'current': i,
                                 'total': total,
                                 'status': 'Committing...'})
+        rep.index.commit("made with love by gitfitti", author=author,
+                            committer=author, author_date=date)
+        i += 1
+    self.update_state(state='PROGRESS',
+                          meta={'current': i,
+                                'total': total,
+                                'status': 'Pushing...'})
     try:
         rep.remotes.origin.set_url(url)
     except:
         rep.create_remote('origin', url)
     try:
-        rep.remotes.origin.push()
-        shutil.rmtree(repname)
+        rep.remotes.origin.push(refspec="master:origin", force=True)
+        shutil.rmtree(name)
     except:
-        shutil.rmtree(repname)
+        shutil.rmtree(name)
         return {'current': i, 'total': total, 'status': "Push Failed!",
             'result': -2}
     return {'current': i, 'total': total, 'status': 'All done!',
