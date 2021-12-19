@@ -7,5 +7,5 @@ app.app_context().push()
 from gitfitti import celery
 
 if __name__ == "__main__":
-    serve(app)
+    serve(app, port=5000)
     # app.run()

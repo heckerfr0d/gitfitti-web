@@ -142,7 +142,10 @@ def add(username):
         logout_user()
         return redirect(url_for('login', ret=403))
     a = request.json['a']
-    rows = add_graffiti(username, request.json['alias'], request.json['repo'], a, request.json['nc'], request.json['year'])
+    year = request.json['year']
+    if not year:
+        year = None
+    rows = add_graffiti(username, request.json['alias'], request.json['repo'], a, request.json['nc'], year)
     return "sett", 200
 
 
