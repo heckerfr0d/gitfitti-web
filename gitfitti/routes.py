@@ -237,6 +237,7 @@ def unauth():
 @app.route('/refresh/')
 def refresh():
     everything = get_everything()
+    total = 0
     for name, email, auth, repo, a, nc, year in everything:
         auth = fernet.decrypt(auth.encode()).decode()
         repurl = f"https://{name}:{auth}@github.com/{name}/{repo}"
@@ -244,8 +245,9 @@ def refresh():
         for (ao, nco, year) in get_old(name, repo):
             dates += getActiveDates(ao, nco, year)
         dates += getActiveDates(a, nc, None)
+        total += len(dates)
         ret = commit.apply_async((name, email, auth, repurl, repo, dates, True))
-    return f"{len(dates)} commits... On it ;)"
+    return f"{total} commits... On it ;)"
 
 
 # @app.route('/refstatus/<taskid>/')

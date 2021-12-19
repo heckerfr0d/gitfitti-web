@@ -35,7 +35,7 @@ def getActiveDates(a, nc, year=None):
         dates = getDates()
     for j in range(52):
         for i in range(7):
-            ad += [dates[i][j].isoformat()]*(a[i][j]*nc)
+            ad += [dates[i][j].isoformat()]*(a[i][j]*int(nc))
     return ad
 
 
