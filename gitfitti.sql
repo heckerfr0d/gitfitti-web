@@ -11,5 +11,7 @@ CREATE TABLE graffiti (
   alias TEXT NOT NULL,
   repo TEXT NOT NULL,
   a INTEGER[][],
-  nc INTEGER
+  nc INTEGER,
+  year INTEGER,
+  UNIQUE (name, alias)
 );

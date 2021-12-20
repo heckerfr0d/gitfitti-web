@@ -79,7 +79,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
                                 'total': total,
                                 'status': 'Committing...'})
         rep.index.commit("made with love by gitfitti", author=author,
-                            committer=author, author_date=date)
+                            committer=author, commit_date=date, author_date=date)
         i += 1
     self.update_state(state='PROGRESS',
                           meta={'current': i,
