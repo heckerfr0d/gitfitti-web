@@ -89,7 +89,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
         return {'current': i, 'total': total, 'status': "Creation or cloning failed!",
         'result': -1}
 
-    rep = git.Repo.init(os.path.join(name, repname), initial_branch=branch)
+    rep = git.Repo.init(os.path.join(name, repname))
     rep.git.add(all=True)
     for date in dates:
         self.update_state(state='PROGRESS',
@@ -103,6 +103,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
                           meta={'current': i,
                                 'total': total,
                                 'status': 'Pushing...'})
+    rep.active_branch.rename(branch)
     try:
         rep.remotes.origin.set_url(url)
     except:
