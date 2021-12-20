@@ -50,27 +50,44 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
         self.update_state(state='PROGRESS',
                           meta={'current': i,
                                 'total': total,
-                                'status': 'Cloning repo...'})
-        git.cmd.Git(name).clone(url)
-    except:
-        shutil.rmtree(name)
-        return {'current': i, 'total': total, 'status': "Clone Failed!",
-        'result': -1}
-    if deleterep:
-        self.update_state(state='PROGRESS',
-                          meta={'current': i,
-                                'total': total,
-                                'status': 'Recreating repo...'})
+                                'status': 'Looking for your repo...'})
         headers = {
             'Authorization': 'token '+auth
         }
-        requests.delete(
-            f'https://api.github.com/repos/{name}/{repname}', headers=headers)
-        data = json.dumps(
-            {"name": repname, "description": "A repo for GitHub graffiti", "private": True})
-        requests.post('https://api.github.com/user/repos',
-                        headers=headers, data=data)
-        shutil.rmtree(os.path.join(name, repname, '.git'))
+        api = f'https://api.github.com/repos/{name}/{repname}'
+        private = True
+        resp = requests.get(api, headers=headers)
+        if resp.status_code == 200:
+            self.update_state(state='PROGRESS',
+                                meta={'current': i,
+                                        'total': total,
+                                        'status': 'Found it! Cloning...'})
+            git.cmd.Git(name).clone(url)
+            if deleterep:
+                self.update_state(state='PROGRESS',
+                                    meta={'current': i,
+                                            'total': total,
+                                            'status': 'Recreating your repo...'})
+                data = resp.json()
+                private = data['private']
+                print(private)
+                shutil.rmtree(os.path.join(name, repname, '.git'))
+                requests.delete(api, headers=headers)
+                data = json.dumps({"name": repname, "description": "A repo for GitHub graffiti", "private": private})
+                requests.post('https://api.github.com/user/repos', headers=headers, data=data)
+        else:
+            self.update_state(state='PROGRESS',
+                                meta={'current': i,
+                                        'total': total,
+                                        'status': 'Creating the repo...'})
+            data = json.dumps({"name": repname, "description": "A repo for GitHub graffiti", "private": private})
+            requests.post('https://api.github.com/user/repos', headers=headers, data=data)
+            git.cmd.Git(name).clone(url)
+    except:
+        shutil.rmtree(name)
+        return {'current': i, 'total': total, 'status': "Creation or cloning failed!",
+        'result': -1}
+
     rep = git.Repo.init(os.path.join(name, repname))
     rep.git.add(all=True)
     for date in dates:

@@ -161,7 +161,7 @@
                     if (data['state']=='SUCCESS') {
                         clearInterval(interval);
                         progress.style.display = 'none';
-                        message.innerHTML = 'Created ' + data['total'] + message.innerHTML.trim().slice(8);
+                        message.innerHTML = 'Created ' + data['total'] + ' commits.';
                     }
                     else {
                         i = data['current'];

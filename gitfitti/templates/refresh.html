@@ -11,7 +11,7 @@
 {% block progress %}
 <script>
     let main = document.getElementById('main');
-    main.style.width = '69%';
+    main.style.width = '42%';
     var total = 0;
     var repos = 0;
     var message = document.getElementById('res');
@@ -32,6 +32,7 @@
         const progresslabel = document.querySelector('span[id="progresslabel"][name="'+uname+'"]');
         const user = document.querySelector('p[id="user"][name="'+uname+'"]');
         progress.style.display = 'block';
+        progress.style.margin = '-10px 0px 10px 0px';
         const tid = '{{taskid}}';
         const interval = setInterval(function() {
             fetch('/status/'+tid, {
