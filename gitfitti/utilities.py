@@ -67,7 +67,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
         requests.delete(
             f'https://api.github.com/repos/{name}/{repname}', headers=headers)
         data = json.dumps(
-            {"name": repname, "description": "A repo for GitHub graffiti"})
+            {"name": repname, "description": "A repo for GitHub graffiti", "private": True})
         requests.post('https://api.github.com/user/repos',
                         headers=headers, data=data)
         shutil.rmtree(os.path.join(name, repname, '.git'))
