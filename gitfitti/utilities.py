@@ -46,6 +46,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
     total = len(dates)
     i = 0
     os.mkdir(name)
+    branch = 'main'
     try:
         self.update_state(state='PROGRESS',
                           meta={'current': i,
@@ -62,15 +63,15 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
                                 meta={'current': i,
                                         'total': total,
                                         'status': 'Found it! Cloning...'})
+            data = resp.json()
+            branch = data['default_branch']
             git.cmd.Git(name).clone(url)
             if deleterep:
                 self.update_state(state='PROGRESS',
                                     meta={'current': i,
                                             'total': total,
                                             'status': 'Recreating your repo...'})
-                data = resp.json()
                 private = data['private']
-                print(private)
                 shutil.rmtree(os.path.join(name, repname, '.git'))
                 requests.delete(api, headers=headers)
                 data = json.dumps({"name": repname, "description": "A repo for GitHub graffiti", "private": private})
@@ -88,7 +89,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
         return {'current': i, 'total': total, 'status': "Creation or cloning failed!",
         'result': -1}
 
-    rep = git.Repo.init(os.path.join(name, repname))
+    rep = git.Repo.init(os.path.join(name, repname), initial_branch=branch)
     rep.git.add(all=True)
     for date in dates:
         self.update_state(state='PROGRESS',
@@ -107,7 +108,7 @@ def commit(self, name, email, auth, url, repname, dates, deleterep=False):
     except:
         rep.create_remote('origin', url)
     try:
-        rep.remotes.origin.push(refspec="master:main", force=True)
+        rep.remotes.origin.push(refspec=f"{branch}:{branch}", force=True)
         shutil.rmtree(name)
     except:
         shutil.rmtree(name)
