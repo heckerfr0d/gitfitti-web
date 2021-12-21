@@ -1,418 +1,423 @@
 var txt = {
-    'A': Array(),
-    'B': Array(),
-    'C': Array(),
-    'D': Array(),
-    'E': Array(),
-    'F': Array(),
-    'G': Array(),
-    'H': Array(),
-    'I': Array(),
-    'J': Array(),
-    'K': Array(),
-    'L': Array(),
-    'M': Array(),
-    'N': Array(),
-    'O': Array(),
-    'P': Array(),
-    'Q': Array(),
-    'R': Array(),
-    'S': Array(),
-    'T': Array(),
-    'U': Array(),
-    'V': Array(),
-    'W': Array(),
-    'X': Array(),
-    'Y': Array(),
-    'Z': Array(),
-    '.': Array(),
-    ',': Array(),
-    ';': Array(),
-    ':': Array(),
-    '\'': Array(),
-    '"': Array(),
-    ' ': Array(),
-    '+': Array(),
-    '-': Array(),
-    '_': Array(),
-    '[': Array(),
-    ']': Array(),
-    '(': Array(),
-    ')': Array(),
-    '<': Array(),
-    '>': Array(),
-    '!': Array(),
-    '?': Array(),
-    '*': Array()
+    'A': [
+        "    ",
+        " aa ",
+        "a  a",
+        "aaaa",
+        "a  a",
+        "a  a",
+        "    "
+    ],
+    'B': [
+        "    ",
+        "bbb ",
+        "b  b",
+        "bbbb",
+        "b  b",
+        "bbb ",
+        "    "
+    ],
+    'C': [
+        "    ",
+        " cc ",
+        "c  c",
+        "c   ",
+        "c  c",
+        " cc ",
+        "    ",
+    ],
+    'D': [
+        "    ",
+        "ddd ",
+        "d  d",
+        "d  d",
+        "d  d",
+        "ddd ",
+        "    ",
+    ],
+    'E': [
+        "   ",
+        "eee",
+        "e  ",
+        "eee",
+        "e  ",
+        "eee",
+        "   ",
+    ],
+    'F': [
+        "   ",
+        "fff",
+        "f  ",
+        "fff",
+        "f  ",
+        "f  ",
+        "   ",
+    ],
+    'G': [
+        "    ",
+        " ggg",
+        "g   ",
+        "g gg",
+        "g  g",
+        " gg ",
+        "    ",
+    ],
+    'H': [
+        "    ",
+        "h  h",
+        "h  h",
+        "hhhh",
+        "h  h",
+        "h  h",
+        "    "
+    ],
+    'I': [
+        " ",
+        "i",
+        "i",
+        "i",
+        "i",
+        "i",
+        " ",
+    ],
+    'J': [
+        "    ",
+        "   j",
+        "   j",
+        "   j",
+        "j  j",
+        " jj ",
+        "    ",
+    ],
+    'K': [
+        "    ",
+        "k  k",
+        "k k ",
+        "kk  ",
+        "k k ",
+        "k  k",
+        "    ",
+    ],
+    'L': [
+        "   ",
+        "l  ",
+        "l  ",
+        "l  ",
+        "l  ",
+        "lll",
+        "   ",
+    ],
+    'M': [
+        "     ",
+        "m   m",
+        "mm mm",
+        "m m m",
+        "m   m",
+        "m   m",
+        "     ",
+    ],
+    'N': [
+        "     ",
+        "n   n",
+        "nn  n",
+        "n n n",
+        "n  nn",
+        "n   n",
+        "     ",
+    ],
+    'O': [
+        "    ",
+        " oo ",
+        "o  o",
+        "o  o",
+        "o  o",
+        " oo ",
+        "    ",
+    ],
+    'P': [
+        "    ",
+        "ppp ",
+        "p  p",
+        "ppp ",
+        "p   ",
+        "p   ",
+        "    ",
+    ],
+    'Q': [
+        "    ",
+        " qq ",
+        "q  q",
+        "q  q",
+        "q  q",
+        " qq ",
+        "   q"
+    ],
+    'R': [
+        "    ",
+        "rrr ",
+        "r  r",
+        "rrr ",
+        "r r ",
+        "r  r",
+        "    ",
+    ],
+    'S': [
+        "    ",
+        " sss",
+        "s   ",
+        " ss ",
+        "   s",
+        "sss ",
+        "    ",
+    ],
+    'T': [
+        "   ",
+        "ttt",
+        " t ",
+        " t ",
+        " t ",
+        " t ",
+        "   ",
+    ],
+    'U': [
+        "    ",
+        "u  u",
+        "u  u",
+        "u  u",
+        "u  u",
+        " uu ",
+        "    ",
+    ],
+    'V': [
+        "     ",
+        "v   v",
+        "v   v",
+        " v v ",
+        " v v ",
+        "  v  ",
+        "     ",
+    ],
+    'W': [
+        "     ",
+        "w   w",
+        "w w w",
+        "w w w",
+        "w w w",
+        " w w ",
+        "     ",
+    ],
+    'X': [
+        "     ",
+        "x   x",
+        " x x ",
+        "  x  ",
+        " x x ",
+        "x   x",
+        "     ",
+    ],
+    'Y': [
+        "     ",
+        "y   y",
+        " y y ",
+        "  y  ",
+        "  y  ",
+        "  y  ",
+        "     ",
+    ],
+    'Z': [
+        "   ",
+        "zzz",
+        "  z",
+        " z ",
+        "z  ",
+        "zzz",
+        "   ",
+    ],
+    '.': [
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        ".",
+        " ",
+    ],
+    ',': [
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        "  ",
+        " ,",
+        ", ",
+    ],
+    ';': [
+        "  ",
+        "  ",
+        " ;",
+        "  ",
+        " ;",
+        "; ",
+        "  ",
+    ],
+    ':': [
+        " ",
+        " ",
+        ":",
+        " ",
+        ":",
+        " ",
+        " ",
+    ],
+    '\'': [],
+    '"': [
+        " ",
+        "'",
+        "'",
+        " ",
+        " ",
+        " ",
+        " ",
+    ],
+    ' ': [
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+        " ",
+    ],
+    '+': [
+        "   ",
+        "   ",
+        " + ",
+        "+++",
+        " + ",
+        "   ",
+        "   ",
+    ],
+    '-': [
+        "  ",
+        "  ",
+        "  ",
+        "--",
+        "  ",
+        "  ",
+        "  ",
+    ],
+    '_': [
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+        "   ",
+        "___",
+        "   ",
+    ],
+    '[': [
+        "  ",
+        "[[",
+        "[ ",
+        "[ ",
+        "[ ",
+        "[[",
+        "  ",
+    ],
+    ']': [
+        "  ",
+        "]]",
+        " ]",
+        " ]",
+        " ]",
+        "]]",
+        "  ",
+    ],
+    '(': [
+        "  ",
+        " (",
+        "( ",
+        "( ",
+        "( ",
+        " (",
+        "  ",
+    ],
+    ')': [
+        "  ",
+        ") ",
+        " )",
+        " )",
+        " )",
+        ") ",
+        "  ",
+    ],
+    '<': [
+        "   ",
+        "  <",
+        " < ",
+        "<  ",
+        " < ",
+        "  <",
+        "   ",
+    ],
+    '>': [
+        "   ",
+        ">  ",
+        " > ",
+        "  >",
+        " > ",
+        ">  ",
+        "   ",
+    ],
+    '!': [
+        " ",
+        "!",
+        "!",
+        "!",
+        " ",
+        "!",
+        " ",
+    ],
+    '?': [
+        "    ",
+        "??? ",
+        "   ?",
+        " ?? ",
+        "    ",
+        " ?  ",
+        "    ",
+    ],
+    '*': [
+        "     ",
+        "  *  ",
+        "* * *",
+        " *** ",
+        "* * *",
+        "  *  ",
+        "     ",
+    ]
 };
 
 var pub = Array();
 
-txt['A'].push("    ");
-txt['A'].push(" aa ");
-txt['A'].push("a  a");
-txt['A'].push("aaaa");
-txt['A'].push("a  a");
-txt['A'].push("a  a");
-txt['A'].push("    ");
-
-txt['B'].push("    ");
-txt['B'].push("bbb ");
-txt['B'].push("b  b");
-txt['B'].push("bbbb");
-txt['B'].push("b  b");
-txt['B'].push("bbb ");
-txt['B'].push("    ");
-
-txt['C'].push("    ");
-txt['C'].push(" cc ");
-txt['C'].push("c  c");
-txt['C'].push("c   ");
-txt['C'].push("c  c");
-txt['C'].push(" cc ");
-txt['C'].push("    ");
-
-txt['D'].push("    ");
-txt['D'].push("ddd ");
-txt['D'].push("d  d");
-txt['D'].push("d  d");
-txt['D'].push("d  d");
-txt['D'].push("ddd ");
-txt['D'].push("    ");
-
-txt['E'].push("   ");
-txt['E'].push("eee");
-txt['E'].push("e  ");
-txt['E'].push("eee");
-txt['E'].push("e  ");
-txt['E'].push("eee");
-txt['E'].push("   ");
-
-txt['F'].push("   ");
-txt['F'].push("fff");
-txt['F'].push("f  ");
-txt['F'].push("fff");
-txt['F'].push("f  ");
-txt['F'].push("f  ");
-txt['F'].push("   ");
-
-txt['G'].push("    ");
-txt['G'].push(" ggg");
-txt['G'].push("g   ");
-txt['G'].push("g gg");
-txt['G'].push("g  g");
-txt['G'].push(" gg ");
-txt['G'].push("    ");
-
-txt['H'].push("    ");
-txt['H'].push("h  h");
-txt['H'].push("h  h");
-txt['H'].push("hhhh");
-txt['H'].push("h  h");
-txt['H'].push("h  h");
-txt['H'].push("    ");
-
-txt['I'].push(" ");
-txt['I'].push("i");
-txt['I'].push("i");
-txt['I'].push("i");
-txt['I'].push("i");
-txt['I'].push("i");
-txt['I'].push(" ");
-
-txt['J'].push("    ");
-txt['J'].push("   j");
-txt['J'].push("   j");
-txt['J'].push("   j");
-txt['J'].push("j  j");
-txt['J'].push(" jj ");
-txt['J'].push("    ");
-
-txt['K'].push("    ");
-txt['K'].push("k  k");
-txt['K'].push("k k ");
-txt['K'].push("kk  ");
-txt['K'].push("k k ");
-txt['K'].push("k  k");
-txt['K'].push("    ");
-
-txt['L'].push("   ");
-txt['L'].push("l  ");
-txt['L'].push("l  ");
-txt['L'].push("l  ");
-txt['L'].push("l  ");
-txt['L'].push("lll");
-txt['L'].push("   ");
-
-txt['M'].push("     ");
-txt['M'].push("m   m");
-txt['M'].push("mm mm");
-txt['M'].push("m m m");
-txt['M'].push("m   m");
-txt['M'].push("m   m");
-txt['M'].push("     ");
-
-txt['N'].push("     ");
-txt['N'].push("n   n");
-txt['N'].push("nn  n");
-txt['N'].push("n n n");
-txt['N'].push("n  nn");
-txt['N'].push("n   n");
-txt['N'].push("     ");
-
-txt['O'].push("    ");
-txt['O'].push(" oo ");
-txt['O'].push("o  o");
-txt['O'].push("o  o");
-txt['O'].push("o  o");
-txt['O'].push(" oo ");
-txt['O'].push("    ");
-
-txt['P'].push("    ");
-txt['P'].push("ppp ");
-txt['P'].push("p  p");
-txt['P'].push("ppp ");
-txt['P'].push("p   ");
-txt['P'].push("p   ");
-txt['P'].push("    ");
-
-txt['Q'].push("    ");
-txt['Q'].push(" qq ");
-txt['Q'].push("q  q");
-txt['Q'].push("q  q");
-txt['Q'].push("q  q");
-txt['Q'].push(" qq ");
-txt['Q'].push("   q");
-
-txt['R'].push("    ");
-txt['R'].push("rrr ");
-txt['R'].push("r  r");
-txt['R'].push("rrr ");
-txt['R'].push("r r ");
-txt['R'].push("r  r");
-txt['R'].push("    ");
-
-txt['S'].push("    ");
-txt['S'].push(" sss");
-txt['S'].push("s   ");
-txt['S'].push(" ss ");
-txt['S'].push("   s");
-txt['S'].push("sss ");
-txt['S'].push("    ");
-
-txt['T'].push("   ");
-txt['T'].push("ttt");
-txt['T'].push(" t ");
-txt['T'].push(" t ");
-txt['T'].push(" t ");
-txt['T'].push(" t ");
-txt['T'].push("   ");
-
-txt['U'].push("    ");
-txt['U'].push("u  u");
-txt['U'].push("u  u");
-txt['U'].push("u  u");
-txt['U'].push("u  u");
-txt['U'].push(" uu ");
-txt['U'].push("    ");
-
-txt['V'].push("     ");
-txt['V'].push("v   v");
-txt['V'].push("v   v");
-txt['V'].push(" v v ");
-txt['V'].push(" v v ");
-txt['V'].push("  v  ");
-txt['V'].push("     ");
-
-txt['W'].push("     ");
-txt['W'].push("w   w");
-txt['W'].push("w w w");
-txt['W'].push("w w w");
-txt['W'].push("w w w");
-txt['W'].push(" w w ");
-txt['W'].push("     ");
-
-txt['X'].push("     ");
-txt['X'].push("x   x");
-txt['X'].push(" x x ");
-txt['X'].push("  x  ");
-txt['X'].push(" x x ");
-txt['X'].push("x   x");
-txt['X'].push("     ");
-
-txt['Y'].push("     ");
-txt['Y'].push("y   y");
-txt['Y'].push(" y y ");
-txt['Y'].push("  y  ");
-txt['Y'].push("  y  ");
-txt['Y'].push("  y  ");
-txt['Y'].push("     ");
-
-txt['Z'].push("   ");
-txt['Z'].push("zzz");
-txt['Z'].push("  z");
-txt['Z'].push(" z ");
-txt['Z'].push("z  ");
-txt['Z'].push("zzz");
-txt['Z'].push("   ");
-
-txt['.'].push(" ");
-txt['.'].push(" ");
-txt['.'].push(" ");
-txt['.'].push(" ");
-txt['.'].push(" ");
-txt['.'].push(".");
-txt['.'].push(" ");
-
-txt[','].push("  ");
-txt[','].push("  ");
-txt[','].push("  ");
-txt[','].push("  ");
-txt[','].push("  ");
-txt[','].push(" ,");
-txt[','].push(", ");
-
-txt[';'].push("  ");
-txt[';'].push("  ");
-txt[';'].push(" ;");
-txt[';'].push("  ");
-txt[';'].push(" ;");
-txt[';'].push("; ");
-txt[';'].push("  ");
-
-txt[':'].push(" ");
-txt[':'].push(" ");
-txt[':'].push(":");
-txt[':'].push(" ");
-txt[':'].push(":");
-txt[':'].push(" ");
-txt[':'].push(" ");
-
-txt['('].push("  ");
-txt['('].push(" (");
-txt['('].push("( ");
-txt['('].push("( ");
-txt['('].push("( ");
-txt['('].push(" (");
-txt['('].push("  ");
-
-txt[')'].push("  ");
-txt[')'].push(") ");
-txt[')'].push(" )");
-txt[')'].push(" )");
-txt[')'].push(" )");
-txt[')'].push(") ");
-txt[')'].push("  ");
-
-txt['['].push("  ");
-txt['['].push("[[");
-txt['['].push("[ ");
-txt['['].push("[ ");
-txt['['].push("[ ");
-txt['['].push("[[");
-txt['['].push("  ");
-
-txt[']'].push("  ");
-txt[']'].push("]]");
-txt[']'].push(" ]");
-txt[']'].push(" ]");
-txt[']'].push(" ]");
-txt[']'].push("]]");
-txt[']'].push("  ");
-
-txt['<'].push("   ");
-txt['<'].push("  <");
-txt['<'].push(" < ");
-txt['<'].push("<  ");
-txt['<'].push(" < ");
-txt['<'].push("  <");
-txt['<'].push("   ");
-
-txt['>'].push("   ");
-txt['>'].push(">  ");
-txt['>'].push(" > ");
-txt['>'].push("  >");
-txt['>'].push(" > ");
-txt['>'].push(">  ");
-txt['>'].push("   ");
-
-txt['!'].push(" ");
-txt['!'].push("!");
-txt['!'].push("!");
-txt['!'].push("!");
-txt['!'].push(" ");
-txt['!'].push("!");
-txt['!'].push(" ");
-
-txt['?'].push("    ");
-txt['?'].push("??? ");
-txt['?'].push("   ?");
-txt['?'].push(" ?? ");
-txt['?'].push("    ");
-txt['?'].push(" ?  ");
-txt['?'].push("    ");
-
-txt['+'].push("   ");
-txt['+'].push("   ");
-txt['+'].push(" + ");
-txt['+'].push("+++");
-txt['+'].push(" + ");
-txt['+'].push("   ");
-txt['+'].push("   ");
-
-txt['-'].push("  ");
-txt['-'].push("  ");
-txt['-'].push("  ");
-txt['-'].push("--");
-txt['-'].push("  ");
-txt['-'].push("  ");
-txt['-'].push("  ");
-
-txt['_'].push("   ");
-txt['_'].push("   ");
-txt['_'].push("   ");
-txt['_'].push("   ");
-txt['_'].push("   ");
-txt['_'].push("___");
-txt['_'].push("   ");
-
-txt['*'].push("     ");
-txt['*'].push("  *  ");
-txt['*'].push("* * *");
-txt['*'].push(" *** ");
-txt['*'].push("* * *");
-txt['*'].push("  *  ");
-txt['*'].push("     ");
-
-txt['\''].push(" ");
-txt['\''].push("'");
-txt['\''].push("'");
-txt['\''].push(" ");
-txt['\''].push(" ");
-txt['\''].push(" ");
-txt['\''].push(" ");
-
-txt[' '].push(" ");
-txt[' '].push(" ");
-txt[' '].push(" ");
-txt[' '].push(" ");
-txt[' '].push(" ");
-txt[' '].push(" ");
-txt[' '].push(" ");
-
 function toggle(elem) {
-    var $radios = elem.parent().find('input[type="radio"]');
-    var colorClasses = ["btn-secondary c0", "btn-secondary c1", "btn-secondary c2"];
-    var $checked = $radios.filter(':checked');
-    var $next = $radios.eq($radios.index($checked[0]) + 1);
-    if (!$next.length) {
-        $next = $radios.first();
+    var radios = elem.parentNode.querySelector('input[type="radio"]');
+    if(!radios) console.log(elem);
+    var checked = elem.parentNode.querySelector('input[type="radio"]:checked');
+    if(!checked) console.log(elem);
+    var colorClasses = ["c0", "c1", "c2"];
+    var next = checked.nextElementSibling;
+    if (!next) {
+        next = radios;
     }
-    $next.prop("checked", true);
-    var newValue = $radios.filter(':checked').val();
-    $(elem)
-        .removeClass(colorClasses.join(" "))
-        .addClass(colorClasses[newValue]);
+    checked.checked = false;
+    next.checked = true;
+    var newValue = next.value;
+    elem.classList.remove(colorClasses[0]);
+    elem.classList.remove(colorClasses[1]);
+    elem.classList.remove(colorClasses[2]);
+    elem.classList.add(colorClasses[newValue]);
+    console.log(colorClasses[newValue]);
 }
 
 function findw(text) {
@@ -439,7 +444,7 @@ function render(trans, text) {
                 for (var k = 0; k < 7; k++)
                     for (var j = offset; j < offset + (txt[text[c]][0].length); j++)
                         if (txt[text[c]][k][j - offset] != ' ')
-                            toggle(trans.parent().find('button[name="' + String(k) + ' ' + String(j) + '"]'));
+                            toggle(trans.parentNode.querySelector('button[name="' + String(k) + ' ' + String(j) + '"]'));
                 offset += txt[text[c]][0].length;
                 if (c != ' ')
                     offset++;
@@ -448,66 +453,91 @@ function render(trans, text) {
     }
 }
 
-$('input[name="translate"]').click(function () {
-    var text = $(this).parent().find('input[name="ttg"]').val();
-    for (var i in pub) {
-        if (text.includes(pub[i])) {
-            txt['~'] = txt[pub[i]];
-            text = text.replaceAll(pub[i], '~');
+const translate = document.querySelectorAll('input[name="translate"]');
+
+translate.forEach(trans => {
+    trans.addEventListener('click', () => {
+        var text = trans.parentNode.querySelector('input[name="ttg"]').value;
+        for (var i in pub) {
+            if (text.includes(pub[i])) {
+                txt['~'] = txt[pub[i]];
+                text = text.replaceAll(pub[i], '~');
+            }
         }
-    }
-    render($(this), text);
+        render(trans, text);
+    });
 });
 
-$('input[name="clear"]').click(function () {
-    var $buttons = $(this).parent().find('button[type="button"]');
-    for (i in $buttons) {
-        var $radio = $('input[type="radio"][name="' + $buttons[i].name + '"][value="0"]');
-        $radio.prop("checked", true);
-        $buttons[i].className = "btn btn-secondary c0";
-    }
+const clear = document.querySelectorAll('input[name="clear"]');
+
+clear.forEach(clr => {
+    clr.addEventListener('click', () => {
+        var buttons = clr.parentNode.querySelectorAll('button[type="button"]');
+        for (i in buttons) {
+            var radio = document.querySelector('input[type="radio"][name="' + buttons[i].name + '"][value="0"]');
+            var checked = document.querySelector('input[type="radio"][name="' + buttons[i].name + '"]:checked');
+            if (checked)
+                checked.checked = false;
+            if (radio)
+                radio.checked = true;
+            buttons[i].className = "btn btn-secondary c0";
+        }
+    });
 });
 
-$('input[name="invert"]').click(function () {
-    var buttons = $(this).parent().find('button[type="button"]');
-    for (var i in buttons)
-    {
-        if($(buttons[i]).attr('name'))
-            toggle($(buttons[i]));
-    }
+const invert = document.querySelectorAll('input[name="invert"]');
+
+invert.forEach(inv => {
+    inv.addEventListener('click', () => {
+        var buttons = inv.parentNode.querySelectorAll('button[type="button"]');
+        for (var i in buttons) {
+            if (buttons[i].name)
+                toggle(buttons[i]);
+        }
+    });
 });
 
-$('input[name="ttg"]').on('keypress', function(event) {
-    var keyCode = event.keyCode || event.which;
-    if (keyCode === 13) {
-      event.preventDefault();
-      $(this).next().click();
-    }
-  });
+const ttg = document.querySelectorAll('input[name="ttg"]');
 
-$('#dismiss').click( function () {
-    $(this).parent().hide();
+ttg.forEach(tt => {
+    tt.addEventListener('keypress', (event) => {
+        var keyCode = event.keyCode || event.which;
+        if (keyCode === 13) {
+            event.preventDefault();
+            tt.nextElementSibling.click();
+        }
+    });
 });
 
 let action = null;
 
-$("button[class!=\"tr\"]").mousedown(function () {
-    toggle($(this));
-    action = "not null";
+const button = document.querySelectorAll('button[type="button"]');
+
+button.forEach(btn => {
+    btn.addEventListener('mousedown', () => {
+        toggle(btn);
+        action = "not null";
+    });
+    btn.addEventListener('mouseup click', (event) => {
+        event.preventDefault();
+        action = null;
+    });
+    btn.addEventListener('mouseenter', (event) => {
+        if (action)
+            toggle(btn);
+    });
 });
 
-$(document).on("mouseup", function (event) {
+document.addEventListener("mouseup", function (event) {
     action = null;
 });
 
-$("button[class!=\"tr\"]").on("mouseup click", function (event) {
+
+const dismiss = document.getElementById('dismiss');
+
+dismiss.addEventListener('click', (event) => {
     event.preventDefault();
-    action = null;
-});
-
-$("button[class!=\"tr\"]").mouseenter(function (event) {
-    if (action)
-        toggle($(this));
+    dismiss.parent.parentNode.style.display = 'none';
 });
 
 
@@ -538,123 +568,123 @@ function changeTheme(e) {
 toggleSwitch.addEventListener('change', changeTheme, false);
 
 txt['annen'] = [
-	'                                                  ',
-	' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
-	'#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
-	'#### # # # # # # ### # # #   # # # ###  ##   ##  #',
-	'#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
-	'#  # #   # #   # ### #   #   #   # ### ###  ###  #',
-	'                                                  '
+    '                                                  ',
+    ' ##  #   # #   # ### #   #   #   # ###  ###  ### #',
+    '#  # ##  # ##  # #   ##  #   ## ## #   #    #    #',
+    '#### # # # # # # ### # # #   # # # ###  ##   ##  #',
+    '#  # #  ## #  ## #   #  ##   #   # #      #    #  ',
+    '#  # #   # #   # ### #   #   #   # ### ###  ###  #',
+    '                                                  '
 ];
 pub.push('annen');
 
 txt['<3'] = [
-	'     ',
-	'     ',
-	'## ##',
-	'#####',
-	' ### ',
-	'  #  ',
-	'     '
+    '     ',
+    '     ',
+    '## ##',
+    '#####',
+    ' ### ',
+    '  #  ',
+    '     '
 ];
 pub.push('<3');
 
 txt['a'] = [
-	'     ',
-	'     ',
-	' ##  ',
-	'#  # ',
-	'#  # ',
-	' ## #',
-	'     '
+    '     ',
+    '     ',
+    ' ##  ',
+    '#  # ',
+    '#  # ',
+    ' ## #',
+    '     '
 ];
 
 txt['b'] = [
-	'   ',
-	'#  ',
-	'#  ',
-	'## ',
-	'# #',
-	'## ',
-	'   '
+    '   ',
+    '#  ',
+    '#  ',
+    '### ',
+    '#  #',
+    '### ',
+    '   '
 ];
 
 txt['c'] = [
-	'   ',
-	'   ',
-	'   ',
-	' ##',
-	'#  ',
-	'#  ',
-	' ##'
+    '   ',
+    '   ',
+    ' ##',
+    '#  ',
+    '#  ',
+    ' ##',
+    '   '
 ];
 
 
 
 
 txt['o'] = [
-	'   ',
-	'   ',
-	'###',
-	'# #',
-	'# #',
-	'###',
-	'   '
+    '   ',
+    '   ',
+    '###',
+    '# #',
+    '# #',
+    '###',
+    '   '
 ];
 
 
 txt['$'] = [
-	'  #  ',
-	'#####',
-	'# #  ',
-	'#####',
-	'  # #',
-	'#####',
-	'  #  '
+    '  #  ',
+    '#####',
+    '# #  ',
+    '#####',
+    '  # #',
+    '#####',
+    '  #  '
 ];
 
 
 txt['|'] = [
-	' ',
-	'#',
-	'#',
-	'#',
-	'#',
+    ' ',
+    '#',
+    '#',
+    '#',
+    '#',
     ' ',
 ];
 
 txt['smile'] = [
-	'     ',
-	'#   #',
-	'     ',
-	'#   #',
-	' ### ',
-	'     ',
-	'     '
+    '     ',
+    '#   #',
+    '     ',
+    '#   #',
+    ' ### ',
+    '     ',
+    '     '
 ];
 
 pub.push('smile');
 
 
 txt['n'] = [
-	'    ',
-	'    ',
-	' ## ',
-	'#  #',
-	'#  #',
-	'#  #',
-	'    '
+    '    ',
+    '    ',
+    ' ## ',
+    '#  #',
+    '#  #',
+    '#  #',
+    '    '
 ];
 
 
 txt['∞'] = [
-	'         ',
-	' ##   ## ',
-	'#  # #  #',
-	'#   #   #',
-	'#  # #  #',
-	' ##   ## ',
-	'         '
+    '         ',
+    ' ##   ## ',
+    '#  # #  #',
+    '#   #   #',
+    '#  # #  #',
+    ' ##   ## ',
+    '         '
 ];
 
 

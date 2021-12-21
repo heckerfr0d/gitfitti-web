@@ -54,7 +54,6 @@ def update_auth(username, auth):
     cur.execute("UPDATE users SET auth = %s WHERE name = %s", (auth, username))
     conn.commit()
     cur.close()
-    return True
 
 def get_user_graffiti(username):
     cur = conn.cursor()
@@ -68,21 +67,18 @@ def add_graffiti(username, alias, repo, a, nc, year):
     cur.execute("INSERT INTO graffiti (name, alias, repo, a, nc, year) VALUES (%s, %s, %s, %s, %s, %s)", (username, alias, repo, a, nc, year))
     conn.commit()
     cur.close()
-    return get_user_graffiti(username)
 
 def update_graffiti(username, oldalias, newalias, repo, a, nc, year):
     cur = conn.cursor()
     cur.execute("UPDATE graffiti SET alias = %s, repo = %s, a = %s, nc = %s, year = %s WHERE name = %s AND alias = %s", (newalias, repo, a, nc, year, username, oldalias))
     conn.commit()
     cur.close()
-    return get_user_graffiti(username)
 
 def delete_graffiti(username, alias):
     cur = conn.cursor()
     cur.execute("DELETE FROM graffiti WHERE name = %s AND alias = %s", (username, alias))
     conn.commit()
     cur.close()
-    return get_user_graffiti(username)
 
 def delete_user(username):
     cur = conn.cursor()
@@ -90,7 +86,6 @@ def delete_user(username):
     cur.execute("DELETE FROM users WHERE name = %s", (username,))
     conn.commit()
     cur.close()
-    return True
 
 def get_old(username, repo):
     cur = conn.cursor()

@@ -7,20 +7,14 @@ import requests
 import base64
 import json
 
-TOKEN = os.getenv('TOKEN')
-
 
 def getDates(year=None):
     if year:
-        jan1 = datetime.datetime(
-            year=year, month=1, day=1, hour=10, minute=20, second=59)
+        jan1 = datetime.datetime(year=year, month=1, day=1, hour=10, minute=20, second=59)
     else:
-        jan1 = datetime.datetime.now() - datetime.timedelta(weeks=53)
-        jan1 -= datetime.timedelta(microseconds=jan1.microsecond)
+        jan1 = datetime.datetime.today() - datetime.timedelta(weeks=53)
 
-    def onDay(date, day): return date + \
-        datetime.timedelta(days=(day-date.weekday()) % 7)
-    first_sunday = onDay(jan1, 6)
+    first_sunday = jan1 + datetime.timedelta(days=(6-jan1.weekday()) % 7)
     dates = [list() for x in range(7)]
     for x in range(52 * 7):
         dates[x % 7].append(first_sunday + datetime.timedelta(x))

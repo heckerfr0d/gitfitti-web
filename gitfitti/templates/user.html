@@ -86,13 +86,13 @@
 
 <script>
     function showList() {
-        $('#main').hide();
-        $('#list').show();
+        document.getElementById("main").style.display = "none";
+        document.getElementById("list").style.display = "block";
     }
 
     function hideList() {
-        $('#list').hide();
-        $('#main').show();
+        document.getElementById("list").style.display = "none";
+        document.getElementById("main").style.display = "block";
     }
 
     function apply(alias) {

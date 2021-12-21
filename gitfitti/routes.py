@@ -7,8 +7,7 @@ from werkzeug.utils import redirect
 from .user import *
 from .utilities import *
 
-n = 0
-cont = []
+
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 oauth_url = f"https://github.com/login/oauth/authorize?client_id={CLIENT_ID}"
