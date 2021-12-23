@@ -14,6 +14,8 @@ def getDates(year=None):
     else:
         jan1 = datetime.datetime.today() - datetime.timedelta(weeks=53)
 
+    jan1 = jan1.replace(microsecond=0)
+
     first_sunday = jan1 + datetime.timedelta(days=(6-jan1.weekday()) % 7)
     dates = [list() for x in range(7)]
     for x in range(52 * 7):
