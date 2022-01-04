@@ -402,9 +402,7 @@ var pub = Array();
 
 function toggle(elem) {
     var radios = elem.parentNode.querySelector('input[type="radio"]');
-    if(!radios) console.log(elem);
     var checked = elem.parentNode.querySelector('input[type="radio"]:checked');
-    if(!checked) console.log(elem);
     var colorClasses = ["c0", "c1", "c2"];
     var next = checked.nextElementSibling;
     if (!next) {
@@ -417,7 +415,6 @@ function toggle(elem) {
     elem.classList.remove(colorClasses[1]);
     elem.classList.remove(colorClasses[2]);
     elem.classList.add(colorClasses[newValue]);
-    console.log(colorClasses[newValue]);
 }
 
 function findw(text) {
@@ -476,10 +473,10 @@ clear.forEach(clr => {
         for (i in buttons) {
             var radio = document.querySelector('input[type="radio"][name="' + buttons[i].name + '"][value="0"]');
             var checked = document.querySelector('input[type="radio"][name="' + buttons[i].name + '"]:checked');
-            if (checked)
-                checked.checked = false;
             if (radio)
                 radio.checked = true;
+            if (checked)
+                checked.checked = false;
             buttons[i].className = "btn btn-secondary c0";
         }
     });
@@ -592,41 +589,49 @@ pub.push('<3');
 txt['a'] = [
     '     ',
     '     ',
-    ' ##  ',
-    '#  # ',
+    '     ',
+    ' ### ',
     '#  # ',
     ' ## #',
     '     '
 ];
 
 txt['b'] = [
-    '   ',
-    '#  ',
-    '#  ',
+    '    ',
+    '#   ',
+    '#   ',
     '### ',
     '#  #',
     '### ',
-    '   '
+    '    '
 ];
 
 txt['c'] = [
     '   ',
     '   ',
+    '   ',
     ' ##',
-    '#  ',
     '#  ',
     ' ##',
     '   '
 ];
 
-
+txt['d'] = [
+    '    ',
+    '   #',
+    '   #',
+    ' ###',
+    '#  #',
+    ' ###',
+    '    '
+];
 
 
 txt['o'] = [
     '   ',
     '   ',
+    '   ',
     '###',
-    '# #',
     '# #',
     '###',
     '   '
@@ -655,7 +660,7 @@ txt['|'] = [
 
 txt['smile'] = [
     '     ',
-    '#   #',
+    ' # # ',
     '     ',
     '#   #',
     ' ### ',
@@ -669,8 +674,8 @@ pub.push('smile');
 txt['n'] = [
     '    ',
     '    ',
-    ' ## ',
-    '#  #',
+    '    ',
+    '### ',
     '#  #',
     '#  #',
     '    '
